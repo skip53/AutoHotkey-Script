@@ -435,11 +435,11 @@
 		#m::Run resmon
 		;^#c::Run, "d:\BaiduYun\Technical Backup\ProgramFiles\ColorPic 4.1  屏幕取色小插件 颜色 色彩 配色\#ColorPic.exe"
 		;^#s::Run, "d:\BaiduYun\Technical Backup\ProgramFiles\#Fast Run\st.lnk"
-		>!m::Run, "C:\Users\LL\AppData\Roaming\Spotify\Spotify.exe"
+		>!m::Run, "D:\TechnicalSupport\Sandbox\LL\1LongAndTrust\drive\D\TechnicalSupport\Users\LL\AppData\Roaming\Spotify\Spotify.exe"
 		~LButton & F2::SendInput, ^+!#m
 		#s::
-			Run sx
-			Run pp
+			Run, "d:\Dropbox\Technical Backup\ProgramFiles.Trust\#Book Tools\Sx_Renamer\Sx_Renamer.exe"
+			Run, "d:\Dropbox\Technical Backup\ProgramFiles.Trust\#Book Tools\Pdg2Pic\Pdg2Pic.exe"
 			;Run ABBYY Screenshot Reader
 			return
 		;录制gif
@@ -647,11 +647,9 @@
 		
 		$F4::
 			CountStp := ++CountStp
-			SetTimer, tkds, 500
+			SetTimer, tkds, -500    ;负数，表示只运行一次
 			Return
 			tkds:
-				if CountStp > 1 ;大于1时关闭计时器
-					SetTimer, TimerPrtSc, Off
 				if CountStp = 1 ;只按一次时执行
 				{
 					SendInput, {F4}
@@ -727,11 +725,9 @@
 		{
 			$RButton::
 				CountStp := ++CountStp
-				SetTimer, TimerPrtSc, 500
+				SetTimer, TimerPrtSc, -500
 				Return
 			TimerPrtSc:
-				if CountStp > 1 ;大于1时关闭计时器
-					SetTimer, TimerPrtSc, Off
 				if CountStp = 1 ;只按一次时执行
 					SendInput, {RButton}
 				if CountStp = 2 ;按两次时...
@@ -1000,11 +996,9 @@
 		v:: 
 		{
 			CountStp := ++CountStp
-			SetTimer, jkdfs, 500
+			SetTimer, jkdfs, -500
 			Return
 			jkdfs:
-				if CountStp > 1 ;大于1时关闭计时器
-					SetTimer, TimerPrtSc, Off
 				if CountStp = 1 ;只按一次时执行
 				{
 					Send, ^v
@@ -1017,6 +1011,7 @@
 				Return
 		}
 		F1:: SendInput, ^+!x	;Inbox view
+		F3:: SendInput, ^+!{F3}	;todo view
 		delete::  ;删除到垃圾桶
 		{
 			SendInput, ^m
@@ -1024,6 +1019,20 @@
 			SendInput, {Down}{End}{Enter}
 			return
 		}
+		$Insert::
+		{
+			CountStp := ++CountStp
+			SetTimer, kdlst, -500
+			Return
+			kdlst:
+				if CountStp = 1 ;只按一次时执行
+					Send, {Insert}
+				if CountStp = 2 ;按两次时...
+					Send, !{Insert}
+				CountStp := 0 ;最后把记录的变量设置为0,于下次记录.
+				Return
+		}
+			
 		
 		#If WinActive("ahk_class TfrmMyLifeMain")	;;;;;;;;;;;;注意AutoHotkey不支持#IfWinActive 和 #If 的嵌套，务必记得#if完，恢复之前的上下文
 	}
@@ -1066,7 +1075,11 @@
 	#F5::
 		SendInput, !{F5}{Right}{Left}{BS}{BS}{BS}
 		sendL("uvz")
-		SendInput, !n{Tab}{Tab}{Tab}{Space}
+		Sleep, 500
+		Control, Check, , TCheckBox2, ahk_class TDLGZIP
+		Control, Uncheck, , TCheckBox1, ahk_class TDLGZIP
+		ControlClick, TButton5, ahk_class TDLGZIP
+		;SendInput, !n{Tab}{Tab}{Tab}{Space}
 		return
 	
 	;文件夹被占用，无法删除时，查看是被谁占用的
@@ -1136,11 +1149,10 @@
 	{
 		++CountStp
 		;循环计时器，每500秒执行一次T0子程序。首次运行时，会先等待指定时间，就靠这个特性来一键多用
-		SetTimer,T0,400 
+		SetTimer, T0, -500 
 		Return
 
 		T0:
-			SetTimer,T0,Off
 			if CountStp = 1 ;只按一次时执行
 				SendInput, {RButton}
 			if CountStp = 2 ;按两次时...
@@ -1153,7 +1165,6 @@
 				IfWinActive, 高亮属性
 					SendInput, {Enter}{Down}{Down}{Down}{Down}{Right}{Right}{Right}{Right}{Right}{Enter}{Tab}{Tab}{Tab}{Tab}{Tab}{Enter}
 			}
-			
 			CountStp := 0 ;最后把记录的变量设置为0,于下次记录.
 		Return
 	}
@@ -1595,7 +1606,6 @@
 	F5:: SendInput, /{U+003A}806{Right}
 	
 }
-
 
 ;-------------------------------------------------------------------------------
 ;~ @Everything
