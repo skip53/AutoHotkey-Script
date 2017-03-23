@@ -44,4 +44,17 @@ Menu, Tray, Icon, %A_LineFile%\..\Icon\keyboard_128px.ico, , 1
 	return
 ::ahk::AutoHotkey
 ::mlo::MyLifeOrganized
+
+/*
+:*:Enter.:: 
+	SendInput, {Enter}
+	sendL(".")
+	return
+*/
+
+#If a_priorkey="Enter"
+	.::  sendL(".")			;回车+句号  自动变点号 避免AutoHotkey。com这种输入错误问题
+#If
+
+
 :*:yjt\:: ?{Space}					;	右箭头

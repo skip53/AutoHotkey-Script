@@ -28,6 +28,7 @@
 	#Include %A_LineFile%\..\..\Functions\TrayIcon by FanaticGuru.ahk
 	#Include %A_LineFile%\..\..\Functions\WinHttpRequest 网络函数 HTTP get post\WinHttpRequest.ahk
 	#Include %A_LineFile%\..\..\Functions\GetActiveBrowserURL 获取浏览器窗口的地址 等信息\GetActiveBrowserURL.ahk
+	#Include %A_LineFile%\..\..\辅助工具\快捷抓取、查找屏幕文字／图像字符串\函数部分 v5.6.ahk
 
 	#InstallKeybdHook		;安装键盘和鼠标钩子 像Input和A_PriorKey，都需要钩子
 	#InstallMouseHook
@@ -98,376 +99,18 @@
 			Return PrivateBytes / 1024 / 1024
 	}
 
-	;-----------------------------------------
-	; 查找屏幕文字/图像字符串及OCR识别
-	; 注意：参数中的x、y为中心点坐标，w、h为左右上下偏移
-	; cha1、cha0分别为0、_字符的容许减少百分比
-	;-----------------------------------------
-	查找文字(x,y,wz,c,w=150,h=150,ByRef rx="",ByRef ry=""
-	  ,ByRef ocr="",cha1=0,cha0=0,id="")
-	{
-	  ; 获取包含所有显示器的虚拟屏幕范围
-	  SysGet, zx, 76
-	  SysGet, zy, 77
-	  SysGet, zw, 78
-	  SysGet, zh, 79
-	  left:=x-w, right:=x+w, up:=y-h, down:=y+h
-	  left:=left<zx ? zx:left
-	  right:=right>zx+zw-1 ? zx+zw-1:right
-	  up:=up<zy ? zy:up, down:=down>zy+zh-1 ? zy+zh-1:down
-	  x:=left, y:=up, w:=right-left+1, h:=down-up+1
-	  if (w<1 or h<1)
-		Return, 0
-	  bch:=A_BatchLines
-	  SetBatchLines, -1
-	  ;--------------------------------------
-	  GetBitsFromScreen(x,y,w,h,Scan0,Stride,bits,id)
-	  ;--------------------------------------
-	  ; 设定图内查找范围，注意不要越界
-	  sx:=0, sy:=0, sw:=w, sh:=h
-	  if PicOCR(Scan0,Stride,sx,sy,sw,sh,wz,c
-		,rx,ry,ocr,cha1,cha0)
-	  {
-		rx+=x, ry+=y
-		SetBatchLines, %bch%
-		Return, 1
-	  }
-	  ; 容差为0的若失败则使用 5% 的容差再找一次
-	  if (cha1=0 and cha0=0)
-		and PicOCR(Scan0,Stride,sx,sy,sw,sh,wz,c
-		  ,rx,ry,ocr,0.05,0.05)
-	  {
-		rx+=x, ry+=y
-		SetBatchLines, %bch%
-		Return, 1
-	  }
-	  SetBatchLines, %bch%
-	  Return, 0
-	}
-
-	;------------------------------
-	; 获取虚拟屏幕的图像数据
-	;------------------------------
-	GetBitsFromScreen(x,y,w,h,ByRef Scan0,ByRef Stride
-	  ,ByRef bits,id="")
-	{
-	  VarSetCapacity(bits, w*h*4, 0)
-	  Ptr:=A_PtrSize ? "Ptr" : "UInt"
-	  ; 桌面窗口对应包含所有显示器的虚拟屏幕
-	  win:=DllCall("GetDesktopWindow", Ptr)
-	  hDC:=DllCall("GetDC", Ptr,win, Ptr)
-	  mDC:=DllCall("CreateCompatibleDC", Ptr,hDC, Ptr)
-	  hBM:=DllCall("CreateCompatibleBitmap", Ptr,hDC
-		, "int",w, "int",h, Ptr)
-	  oBM:=DllCall("SelectObject", Ptr,mDC, Ptr,hBM, Ptr)
-	  DllCall("BitBlt", Ptr,mDC, "int",0, "int",0, "int",w
-		, "int",h, Ptr,hDC, "int",x, "int",y, "uint",0xCC0020)
-	  DllCall("ReleaseDC", Ptr,win, Ptr,hDC)
-	  ; 将指定ID的后台窗口图像叠加到拷贝好的屏幕选择图像上
-	  ; 由于 PrintWindow 的限制，暂不支持最小化的窗口
-	  if (id)
-		WinGet, id, ID, ahk_id %id%
-	  if (id)
-	  {
-		WinGetPos, zx, zy, zw, zh, ahk_id %id%
-		x1:=x>zx ? x:zx, y1:=y>zy ? y:zy
-		x2:=(x+w-1)<(zx+zw-1) ? (x+w-1):(zx+zw-1)
-		y2:=(y+h-1)<(zy+zh-1) ? (y+h-1):(zy+zh-1)
-		sw:=x2-x1+1, sh:=y2-y1+1
-	  }
-	  if (id) and (sw>0 and sh>0)
-	  {
-		hDC2:=DllCall("GetWindowDC", Ptr,id, Ptr)
-		mDC2:=DllCall("CreateCompatibleDC", Ptr,hDC2, Ptr)
-		hBM2:=DllCall("CreateCompatibleBitmap", Ptr,hDC2
-		  , "int",zw, "int",zh, Ptr)
-		oBM2:=DllCall("SelectObject", Ptr,mDC2, Ptr,hBM2, Ptr)
-		DllCall("PrintWindow", Ptr,id, Ptr,mDC2, "int",0)
-		DllCall("BitBlt", Ptr,mDC
-		  , "int",x1-x, "int",y1-y, "int",sw, "int",sh, Ptr,mDC2
-		  , "int",x1-zx, "int",y1-zy, "uint",0x00CC0020)
-		DllCall("SelectObject", Ptr,mDC2, Ptr,oBM2)
-		DllCall("DeleteObject", Ptr,hBM2)
-		DllCall("DeleteDC", Ptr,mDC2)
-		DllCall("ReleaseDC", Ptr,id, Ptr,hDC2)
-	  }
-	  VarSetCapacity(bi, 40, 0)
-	  NumPut(40, bi, 0, "int"), NumPut(w, bi, 4, "int")
-	  NumPut(-h, bi, 8, "int"), NumPut(1, bi, 12, "short")
-	  NumPut(bpp:=32, bi, 14, "short"), NumPut(0, bi, 16, "int")
-	  DllCall("GetDIBits", Ptr,mDC, Ptr,hBM
-		, "int",0, "int",h, Ptr,&bits, Ptr,&bi, "int",0)
-	  DllCall("SelectObject", Ptr,mDC, Ptr,oBM)
-	  DllCall("DeleteObject", Ptr,hBM)
-	  DllCall("DeleteDC", Ptr,mDC)
-	  Scan0:=&bits, Stride:=((w*bpp+31)//32)*4
-	}
-
-	;-----------------------------------------
-	; 图像内查找文字/图像字符串及OCR函数
-	;-----------------------------------------
-	PicOCR(Scan0, Stride, sx, sy, sw, sh, wenzi, c
-	  , ByRef rx, ByRef ry, ByRef ocr, cha1, cha0)
-	{
-	  static MyFunc
-	  if !MyFunc
-	  {
-		x32:="5589E55383EC608B45200FAF45188B551CC1E20201D0894"
-		. "5F08B5524B80000000029D0C1E00289C28B451801D08945ECC"
-		. "745E800000000C745D400000000C745D0000000008B4524894"
-		. "5CC8B45288945C8C745C400000000837D08000F85B20000008"
-		. "B450CC1E81025FF0000008945C08B450CC1E80825FF0000008"
-		. "945BC8B450C25FF0000008945B8C745F400000000EB75C745F"
-		. "800000000EB5A8B45F083C00289C28B451401D00FB6000FB6C"
-		. "03B45C075368B45F083C00189C28B451401D00FB6000FB6C03"
-		. "B45BC751E8B55F08B451401D00FB6000FB6C03B45B8750B8B5"
-		. "5E88B453001D0C600318345F8018345F0048345E8018B45F83"
-		. "B45247C9E8345F4018B45EC0145F08B45F43B45287C83E9170"
-		. "20000837D08010F85A30000008B450C83C001C1E00789450CC"
-		. "745F400000000EB7DC745F800000000EB628B45F083C00289C"
-		. "28B451401D00FB6000FB6C06BD0268B45F083C00189C18B451"
-		. "401C80FB6000FB6C06BC04B8D0C028B55F08B451401D00FB60"
-		. "00FB6D089D0C1E00429D001C83B450C730B8B55E88B453001D"
-		. "0C600318345F8018345F0048345E8018B45F83B45247C96834"
-		. "5F4018B45EC0145F08B45F43B45280F8C77FFFFFFE96A01000"
-		. "0C745F400000000EB7BC745F800000000EB608B55E88B452C8"
-		. "D0C028B45F083C00289C28B451401D00FB6000FB6C06BD0268"
-		. "B45F083C00189C38B451401D80FB6000FB6C06BC04B8D1C028"
-		. "B55F08B451401D00FB6000FB6D089D0C1E00429D001D8C1F80"
-		. "788018345F8018345F0048345E8018B45F83B45247C988345F"
-		. "4018B45EC0145F08B45F43B45280F8C79FFFFFF8B452483E80"
-		. "18945B48B452883E8018945B0C745F401000000E9B0000000C"
-		. "745F801000000E9940000008B45F40FAF452489C28B45F801D"
-		. "08945E88B55E88B452C01D00FB6000FB6D08B450C01D08945E"
-		. "C8B45E88D50FF8B452C01D00FB6000FB6C03B45EC7F488B45E"
-		. "88D50018B452C01D00FB6000FB6C03B45EC7F328B45E82B452"
-		. "489C28B452C01D00FB6000FB6C03B45EC7F1A8B55E88B45240"
-		. "1D089C28B452C01D00FB6000FB6C03B45EC7E0B8B55E88B453"
-		. "001D0C600318345F8018B45F83B45B40F8C60FFFFFF8345F40"
-		. "18B45F43B45B00F8C44FFFFFFC745E800000000E9E30000008"
-		. "B45E88D1485000000008B454001D08B008945E08B45E08945E"
-		. "48B45E48945F08B45E883C0018D1485000000008B454001D08"
-		. "B008945B48B45E883C0028D1485000000008B454001D08B008"
-		. "945B0C745F400000000EB7CC745F800000000EB678B45F08D5"
-		. "0018955F089C28B453401D00FB6003C3175278B45E48D50018"
-		. "955E48D1485000000008B453801C28B45F40FAF452489C18B4"
-		. "5F801C88902EB258B45E08D50018955E08D1485000000008B4"
-		. "53C01C28B45F40FAF452489C18B45F801C889028345F8018B4"
-		. "5F83B45B47C918345F4018B45F43B45B00F8C78FFFFFF8345E"
-		. "8078B45E83B45440F8C11FFFFFF8B45D00FAF452489C28B45D"
-		. "401D08945F08B45240FAF45C8BA0100000029C289D08945E4C"
-		. "745F800000000E9B5020000C745F400000000E993020000C74"
-		. "5E800000000E9710200008B45E883C0018D1485000000008B4"
-		. "54001D08B008945B48B45E883C0028D1485000000008B45400"
-		. "1D08B008945B08B55F88B45B401D03B45CC0F8F2D0200008B5"
-		. "5F48B45B001D03B45C80F8F1C0200008B45E88D14850000000"
-		. "08B454001D08B008945E08B45E883C0038D1485000000008B4"
-		. "54001D08B008945AC8B45E883C0048D1485000000008B45400"
-		. "1D08B008945A88B45E883C0058D1485000000008B454001D08"
-		. "B008945DC8B45E883C0068D1485000000008B454001D08B008"
-		. "945D88B45AC3945A80F4D45A88945A4C745EC00000000E9820"
-		. "000008B45EC3B45AC7D378B55E08B45EC01D08D14850000000"
-		. "08B453801D08B108B45F001D089C28B453001D00FB6003C317"
-		. "40E836DDC01837DDC000F884E0100008B45EC3B45A87D378B5"
-		. "5E08B45EC01D08D1485000000008B453C01D08B108B45F001D"
-		. "089C28B453001D00FB6003C30740E836DD801837DD8000F881"
-		. "20100008345EC018B45EC3B45A40F8C72FFFFFF837DC4000F8"
-		. "5840000008B551C8B45F801C28B454889108B454883C0048B4"
-		. "D208B55F401CA89108B45488D50088B45B489028B45488D500"
-		. "C8B45B08902C745C4040000008B45F42B45B08945D08B55B08"
-		. "9D001C001D08945C88B55B089D0C1E00201D001C083C064894"
-		. "5CC837DD0007907C745D0000000008B45282B45D03B45C87D2"
-		. "E8B45282B45D08945C8EB238B45F83B45107E1B8B45C48D500"
-		. "18955C48D1485000000008B454801D0C700FFFFFFFF8B45C48"
-		. "D50018955C48D1485000000008B454801D08B55E883C207891"
-		. "0817DC4FD0300007F788B55F88B45B401D00145D48B45242B4"
-		. "5D43B45CC0F8D60FDFFFF8B45242B45D48945CCE952FDFFFF9"
-		. "0EB0490EB01908345E8078B45E83B45440F8C83FDFFFF8345F"
-		. "4018B45240145F08B45F43B45C80F8C61FDFFFF8345F8018B4"
-		. "5E40145F08B45F83B45CC0F8C3FFDFFFF837DC4007508B8000"
-		. "00000EB1B908B45C48D1485000000008B454801D0C70000000"
-		. "000B80100000083C4605B5DC2440090"
-		x64:="554889E54883EC60894D10895518448945204C894D288B4"
-		. "5400FAF45308B5538C1E20201D08945F48B5548B8000000002"
-		. "9D0C1E00289C28B453001D08945F0C745EC00000000C745D80"
-		. "0000000C745D4000000008B45488945D08B45508945CCC745C"
-		. "800000000837D10000F85C90000008B4518C1E81025FF00000"
-		. "08945C48B4518C1E80825FF0000008945C08B451825FF00000"
-		. "08945BCC745F800000000E985000000C745FC00000000EB6A8"
-		. "B45F483C0024863D0488B45284801D00FB6000FB6C03B45C47"
-		. "5438B45F483C0014863D0488B45284801D00FB6000FB6C03B4"
-		. "5C075288B45F44863D0488B45284801D00FB6000FB6C03B45B"
-		. "C75108B45EC4863D0488B45604801D0C600318345FC018345F"
-		. "4048345EC018B45FC3B45487C8E8345F8018B45F00145F48B4"
-		. "5F83B45500F8C6FFFFFFFE959020000837D10010F85B600000"
-		. "08B451883C001C1E007894518C745F800000000E98D000000C"
-		. "745FC00000000EB728B45F483C0024863D0488B45284801D00"
-		. "FB6000FB6C06BD0268B45F483C0014863C8488B45284801C80"
-		. "FB6000FB6C06BC04B8D0C028B45F44863D0488B45284801D00"
-		. "FB6000FB6D089D0C1E00429D001C83B451873108B45EC4863D"
-		. "0488B45604801D0C600318345FC018345F4048345EC018B45F"
-		. "C3B45487C868345F8018B45F00145F48B45F83B45500F8C67F"
-		. "FFFFFE999010000C745F800000000E98D000000C745FC00000"
-		. "000EB728B45EC4863D0488B4558488D0C028B45F483C002486"
-		. "3D0488B45284801D00FB6000FB6C06BD0268B45F483C0014C6"
-		. "3C0488B45284C01C00FB6000FB6C06BC04B448D04028B45F44"
-		. "863D0488B45284801D00FB6000FB6D089D0C1E00429D04401C"
-		. "0C1F80788018345FC018345F4048345EC018B45FC3B45487C8"
-		. "68345F8018B45F00145F48B45F83B45500F8C67FFFFFF8B454"
-		. "883E8018945B88B455083E8018945B4C745F801000000E9CA0"
-		. "00000C745FC01000000E9AE0000008B45F80FAF454889C28B4"
-		. "5FC01D08945EC8B45EC4863D0488B45584801D00FB6000FB6D"
-		. "08B451801D08945F08B45EC4898488D50FF488B45584801D00"
-		. "FB6000FB6C03B45F07F538B45EC4898488D5001488B4558480"
-		. "1D00FB6000FB6C03B45F07F388B45EC2B45484863D0488B455"
-		. "84801D00FB6000FB6C03B45F07F1D8B55EC8B454801D04863D"
-		. "0488B45584801D00FB6000FB6C03B45F07E108B45EC4863D04"
-		. "88B45604801D0C600318345FC018B45FC3B45B80F8C46FFFFF"
-		. "F8345F8018B45F83B45B40F8C2AFFFFFFC745EC00000000E90"
-		. "D0100008B45EC4898488D148500000000488B8580000000480"
-		. "1D08B008945E48B45E48945E88B45E88945F48B45EC4898488"
-		. "3C001488D148500000000488B85800000004801D08B008945B"
-		. "88B45EC48984883C002488D148500000000488B85800000004"
-		. "801D08B008945B4C745F800000000E989000000C745FC00000"
-		. "000EB748B45F48D50018955F44863D0488B45684801D00FB60"
-		. "03C31752C8B45E88D50018955E84898488D148500000000488"
-		. "B45704801C28B45F80FAF454889C18B45FC01C88902EB2A8B4"
-		. "5E48D50018955E44898488D148500000000488B45784801C28"
-		. "B45F80FAF454889C18B45FC01C889028345FC018B45FC3B45B"
-		. "87C848345F8018B45F83B45B40F8C6BFFFFFF8345EC078B45E"
-		. "C3B85880000000F8CE4FEFFFF8B45D40FAF454889C28B45D80"
-		. "1D08945F48B45480FAF45CCBA0100000029C289D08945E8C74"
-		. "5FC00000000E929030000C745F800000000E907030000C745E"
-		. "C00000000E9E20200008B45EC48984883C001488D148500000"
-		. "000488B85800000004801D08B008945B88B45EC48984883C00"
-		. "2488D148500000000488B85800000004801D08B008945B48B5"
-		. "5FC8B45B801D03B45D00F8F8C0200008B55F88B45B401D03B4"
-		. "5CC0F8F7B0200008B45EC4898488D148500000000488B85800"
-		. "000004801D08B008945E48B45EC48984883C003488D1485000"
-		. "00000488B85800000004801D08B008945B08B45EC48984883C"
-		. "004488D148500000000488B85800000004801D08B008945AC8"
-		. "B45EC48984883C005488D148500000000488B8580000000480"
-		. "1D08B008945E08B45EC48984883C006488D148500000000488"
-		. "B85800000004801D08B008945DC8B45B03945AC0F4D45AC894"
-		. "5A8C745F000000000E9920000008B45F03B45B07D3F8B55E48"
-		. "B45F001D04898488D148500000000488B45704801D08B108B4"
-		. "5F401D04863D0488B45604801D00FB6003C31740E836DE0018"
-		. "37DE0000F88790100008B45F03B45AC7D3F8B55E48B45F001D"
-		. "04898488D148500000000488B45784801D08B108B45F401D04"
-		. "863D0488B45604801D00FB6003C30740E836DDC01837DDC000"
-		. "F88350100008345F0018B45F03B45A80F8C62FFFFFF837DC80"
-		. "00F85970000008B55388B45FC01C2488B85900000008910488"
-		. "B85900000004883C0048B4D408B55F801CA8910488B8590000"
-		. "000488D50088B45B88902488B8590000000488D500C8B45B48"
-		. "902C745C8040000008B45F82B45B48945D48B55B489D001C00"
-		. "1D08945CC8B55B489D0C1E00201D001C083C0648945D0837DD"
-		. "4007907C745D4000000008B45502B45D43B45CC7D368B45502"
-		. "B45D48945CCEB2B8B45FC3B45207E238B45C88D50018955C84"
-		. "898488D148500000000488B85900000004801D0C700FFFFFFF"
-		. "F8B45C88D50018955C84898488D148500000000488B8590000"
-		. "0004801D08B55EC83C2078910817DC8FD0300007F7B8B55FC8"
-		. "B45B801D00145D88B45482B45D83B45D00F8DEFFCFFFF8B454"
-		. "82B45D88945D0E9E1FCFFFF90EB0490EB01908345EC078B45E"
-		. "C3B85880000000F8C0FFDFFFF8345F8018B45480145F48B45F"
-		. "83B45CC0F8CEDFCFFFF8345FC018B45E80145F48B45FC3B45D"
-		. "00F8CCBFCFFFF837DC8007508B800000000EB23908B45C8489"
-		. "8488D148500000000488B85900000004801D0C70000000000B"
-		. "8010000004883C4605DC390909090909090909090"
-		MCode(MyFunc, A_PtrSize=8 ? x64:x32)
-	  }
-	  ;--------------------------------------
-	  ; 统计字库文字的个数和宽高，将解释文字存入数组并删除<>
-	  ;--------------------------------------
-	  wenzitab:=[], num:=0, wz:="", j:=""
-	  fmt:=A_FormatInteger
-	  SetFormat, IntegerFast, d    ; 正则表达式中要用十进制
-	  Loop, Parse, wenzi, |
-	  {
-		v:=A_LoopField, txt:=""
-		e1:=cha1, e0:=cha0
-		; 用角括号输入每个字库字符串的识别结果文字
-		if RegExMatch(v,"<([^>]*)>",r)
-		  v:=StrReplace(v,r), txt:=r1
-		; 可以用中括号输入每个文字的两个容差，以逗号分隔
-		if RegExMatch(v,"\[([^\]]*)]",r)
-		{
-		  v:=StrReplace(v,r), r2:=""
-		  StringSplit, r, r1, `,
-		  e1:=r1, e0:=r2
-		}
-		; 记录每个文字的起始位置、宽、高、10字符的数量和容差
-		v:=Trim(RegExReplace(v,"[^_0\n]+"),"`n") . "`n"
-		w:=InStr(v,"`n")-1, h:=StrLen(v)//(w+1)
-		re:="[0_]{" w "}\n"
-		if (w>sw or h>sh or w<1 or RegExReplace(v,re)!="")
-		  Continue
-		v:=StrReplace(v,"`n")
-		if InStr(c,"-")
-		  v:=StrReplace(v,"_","1"), r:=e1, e1:=e0, e0:=r
-		else
-		  v:=StrReplace(StrReplace(v,"0","1"),"_","0")
-		len1:=StrLen(StrReplace(v,"0"))
-		len0:=StrLen(StrReplace(v,"1"))
-		e1:=Round(len1*e1), e0:=Round(len0*e0)
-		j.=StrLen(wz) "|" w "|" h
-		  . "|" len1 "|" len0 "|" e1 "|" e0 "|"
-		wz.=v, wenzitab[++num]:=Trim(txt)
-	  }
-	  SetFormat, IntegerFast, %fmt%
-	  if wz=
-		Return, 0
-	  ;--------------------------------------
-	  ; wz 使用Astr参数类型可以自动转为ANSI版字符串
-	  ; in 输入各文字的起始位置等信息，out 返回结果
-	  ; ss 等为临时内存，jiange 超过间隔就会加入*号
-	  ;--------------------------------------
-	  mode:=InStr(c,"**") ? 2 : InStr(c,"*") ? 1 : 0
-	  c:=RegExReplace(c,"[*\-]"), jiange:=5, num*=7
-	  VarSetCapacity(in,num*4,0), i:=-4
-	  Loop, Parse, j, |
-		if (A_Index<=num)
-		  NumPut(A_LoopField, in, i+=4, "int")
-	  VarSetCapacity(gs, sw*sh)
-	  VarSetCapacity(ss, sw*sh, Asc("0"))
-	  k:=StrLen(wz)*4
-	  VarSetCapacity(s1, k, 0), VarSetCapacity(s0, k, 0)
-	  VarSetCapacity(out, 1024*4, 0)
-	  if DllCall(&MyFunc, "int",mode, "uint",c
-		, "int",jiange, "ptr",Scan0, "int",Stride
-		, "int",sx, "int",sy, "int",sw, "int",sh
-		, "ptr",&gs, "ptr",&ss
-		, "Astr",wz, "ptr",&s1, "ptr",&s0
-		, "ptr",&in, "int",num, "ptr",&out)
-	  {
-		ocr:="", i:=-4  ; 返回第一个文字的中心位置
-		x:=NumGet(out,i+=4,"int"), y:=NumGet(out,i+=4,"int")
-		w:=NumGet(out,i+=4,"int"), h:=NumGet(out,i+=4,"int")
-		rx:=x+w//2, ry:=y+h//2
-		While (k:=NumGet(out,i+=4,"int"))
-		  v:=wenzitab[k//7], ocr.=v="" ? "*" : v
-		Return, 1
-	  }
-	  Return, 0
-	}
-
-	MCode(ByRef code, hex)
-	{
-	  ListLines, Off
-	  bch:=A_BatchLines
-	  SetBatchLines, -1
-	  VarSetCapacity(code, StrLen(hex)//2)
-	  Loop, % StrLen(hex)//2
-		NumPut("0x" . SubStr(hex,2*A_Index-1,2)
-		  , code, A_Index-1, "char")
-	  Ptr:=A_PtrSize ? "Ptr" : "UInt"
-	  DllCall("VirtualProtect", Ptr,&code, Ptr
-		,VarSetCapacity(code), "uint",0x40, Ptr . "*",0)
-	  SetBatchLines, %bch%
-	  ListLines, On
-	}
-
-	
-	;判断当前是否为输入状态，比A_CaretX可靠性更好
+	/*
+	判断输入法状态，目前网上提到的方法有4种。没有万金油方法，具体情况具体使用：
+	1. 用日本网友封装的如下函数。相关贴：http://ahk8.com/archive/index.php/thread-3751-1.html 和 https://www6.atwiki.jp/eamat/pages/18.html
+	当然这个库，不止能判断输入状态，还有其它功能
+	这个函数，对MyLifeOrganized窗口无效
+	2. 用A_CaretX，对于浏览器等非标准窗口，无效
+	3. 用ControlGetFocus 获取焦点控件，通过文件名是否含edit等字样，判断是否为编辑控件
+	相关贴：http://ahk8.com/archive/index.php/thread-4338.html
+	4. Sendmessage发送消息给窗口，通过返回值判断
+	相关贴：http://tieba.baidu.com/p/2543294240	
+	*/
+	;判断当前是否为输入状态，比A_CaretX可靠性更好   =1 在输入状态   =0 不在
 	IME_GET(WinTitle="A")  {
 		ControlGet,hwnd,HWND,,,%WinTitle%
 		if  (WinActive(WinTitle))   {
@@ -482,7 +125,7 @@
 			, UInt, 0x0283  ;Message : WM_IME_CONTROL
 			,  Int, 0x0005  ;wParam  : IMC_GETOPENSTATUS
 			,  Int, 0)      ;lParam  : 0
-}	
+	}	
 	
 	;打开超链接
 	openLink(before, after) {
@@ -518,8 +161,7 @@
 		return
 	}
 	
-	;Unicode发送函数,避免触发输入法,也不受全角影响
-	;from [辅助Send 发送ASCII字符 V1.7.2](http://ahk8.com/thread-5385.html)
+	;Unicode发送函数,避免触发输入法,也不受全角影响  from [辅助Send 发送ASCII字符 V1.7.2](http://ahk8.com/thread-5385.html)
 	SendL(ByRef string) {
 		static Ord:=("Asc","Ord")
 		inputString:=("string",string)
@@ -529,8 +171,7 @@
 	}
 	
 	;evernote编辑器增强函数
-	evernoteEdit(eFoward, eEnd)
-	{
+	evernoteEdit(eFoward, eEnd) {
 		;BlockInput On
 		clipboard =
 		Send ^c
@@ -555,8 +196,7 @@
 	}
 	
 	;evernote不保留原格式，增强函数
-	evernoteEditText(eFoward, eEnd)
-	{
+	evernoteEditText(eFoward, eEnd) {
 		clipboard =
 		Send ^c
 		ClipWait, 1
@@ -570,8 +210,7 @@
 	}
 	
 	;evernote无原文本的插入html增强函数
-	evernoteInsertHTML(html)
-	{
+	evernoteInsertHTML(html) {
 		clipboard =
 		WinClip.SetHTML(html)
 		Sleep, 300
@@ -583,8 +222,7 @@
 	WinClip.GetHtml3 := Func("GetHtml_DOM")
 	
 	;操作HTML DOM，比GetHTML函数更实用
-	GetHtml_DOM(this, Encoding := "UTF-8")
-	{
+	GetHtml_DOM(this, Encoding := "UTF-8") {
 		html := this.GetHtml2(Encoding)
 		static doc := ComObjCreate("htmlFile")
 		doc.Write(html), doc.Close()
@@ -592,8 +230,7 @@
 	}
 
 	;WinClip中Get的UTF-8改写，支持中文
-	GetHtml2(this, Encoding := "UTF-8")
-	{
+	GetHtml2(this, Encoding := "UTF-8")	{
 	  if !( clipSize := this._fromclipboard( clipData ) )
 		return ""
 	  if !( out_size := this._getFormatData( out_data, clipData, clipSize, "HTML Format" ) )
@@ -601,11 +238,11 @@
 	  return strget( &out_data, out_size, Encoding )
 	}
 
-	;Returns the path of the specified Explorer window, or the path of the active Explorer window if
-	;a title is not specified. Works with Explorer windows, desktop and some open/save dialogues.
-	;Returns empty path if no path is retrieved.
-	ActiveFolderPath(WinTitle="A")
-	{
+	;返回当前资源管理器中，所在的路径
+	ActiveFolderPath(WinTitle="A") {
+		;Returns the path of the specified Explorer window, or the path of the active Explorer window if
+		;a title is not specified. Works with Explorer windows, desktop and some open/save dialogues.
+		;Returns empty path if no path is retrieved.
 		WinGetClass Class, %WinTitle%
 		If (Class ~= "Progman|WorkerW") ;desktop
 			WinPath := A_Desktop
@@ -1007,16 +644,31 @@
 		
 		;evernote新建笔记
 		Numpad0 & a::SendInput, ^!n
+		
 		$F4::
-			SendInput, {F4}
-			WinWaitActive, ahk_class ENMainFrame, , 2
-			sendL("notebook:""1  Cabinet"" ")		;注意字符中的双引号要转义，不是\"，而是两个引号""
-			return
+			CountStp := ++CountStp
+			SetTimer, tkds, 500
+			Return
+			tkds:
+				if CountStp > 1 ;大于1时关闭计时器
+					SetTimer, TimerPrtSc, Off
+				if CountStp = 1 ;只按一次时执行
+				{
+					SendInput, {F4}
+					WinWaitActive, ahk_class ENMainFrame, , 2
+					sendL("notebook:""1  Cabinet"" ")		;注意字符中的双引号要转义，不是\"，而是两个引号""
+				}
+				if CountStp = 2 ;按两次时...
+					SendInput ^+!#m    ;显示MyLifeOrganized
+				if CountStp = 3 ;按3次时...
+					SendInput, ^+m
+				CountStp := 0 ;最后把记录的变量设置为0,于下次记录.
+				Return
 	}
 }
 	
 ;-------------------------------------------------------------------------------
-;~ Evernote快捷键
+;~ @Evernote快捷键
 ;-------------------------------------------------------------------------------
 #IfWinActive ahk_class (ENSingleNoteView|ENMainFrame)
 {
@@ -1048,7 +700,8 @@
 		F5::
 		{
 			SendInput, {AppsKey}c
-			Sleep, 200
+			WinWait, 复制笔记到笔记本
+			Sleep, 100
 			SendInput, {Enter}
 			return
 		}
@@ -1199,7 +852,7 @@
 }
 
 ;-------------------------------------------------------------------------------
-;~ Explorer快捷键
+;~ @Explorer快捷键
 ;-------------------------------------------------------------------------------
 #IfWinActive, ahk_class (Progman|WorkerW|CabinetWClass|ExploreWClass|#32770|Clover_WidgetWin_0)
 {
@@ -1250,7 +903,7 @@
 }
 
 ;-------------------------------------------------------------------------------
-;~ Anki快捷键
+;~ @Anki快捷键
 ;-------------------------------------------------------------------------------
 #IfWinActive, ahk_exe anki.exe
 {
@@ -1291,7 +944,7 @@
 }
 
 ;-------------------------------------------------------------------------------
-;~ cmd快捷键
+;~ @cmd快捷键
 ;-------------------------------------------------------------------------------
 #IfWinActive ahk_class ConsoleWindowClass
 {
@@ -1306,7 +959,7 @@
 }
 
 ;-------------------------------------------------------------------------------
-;~ M$ Word快捷键
+;~ M$ @Word快捷键
 ;-------------------------------------------------------------------------------
 #IfWinActive ahk_class OpusApp
 {
@@ -1323,7 +976,7 @@
 }
 
 ;-------------------------------------------------------------------------------
-;~ MLO快捷键
+;~ @MyLifeOrganized快捷键
 ;-------------------------------------------------------------------------------
 #IfWinActive ahk_class TfrmMyLifeMain
 {
@@ -1336,17 +989,45 @@
 	}
 	*/
 	
-	;删除到垃圾桶
-	delete::
-		SendInput, {AppsKey}
-		Sleep, 50
-		SendInput, {Up}{Up}{Up}{Up}{Up}{Enter}	;选择移动
-		sendL("垃圾桶")
-		SendInput, {Down}{Down}{Enter}	;移动到对应文件夹
-		return
-	
 	;覆盖搜狗输入法的全局快捷键干扰
 	^+z::ControlSend,, ^+z, A
+	
+	;简化本来已有的快捷键
+	{
+		#If ( WinActive("ahk_class TfrmMyLifeMain") && A_CaretX = "")
+		m:: SendInput, ^m
+		c:: SendInput, ^c
+		v:: 
+		{
+			CountStp := ++CountStp
+			SetTimer, jkdfs, 500
+			Return
+			jkdfs:
+				if CountStp > 1 ;大于1时关闭计时器
+					SetTimer, TimerPrtSc, Off
+				if CountStp = 1 ;只按一次时执行
+				{
+					Send, ^v
+					Sleep, 50
+					SendInput, {Down}{Enter}
+				}
+				if CountStp = 2 ;按两次时...
+					Send, ^v{Enter}
+				CountStp := 0 ;最后把记录的变量设置为0,于下次记录.
+				Return
+		}
+		F1:: SendInput, ^+!x	;Inbox view
+		delete::  ;删除到垃圾桶
+		{
+			SendInput, ^m
+			WinWait, ahk_class TfrmSelectTaskNode
+			SendInput, {Down}{End}{Enter}
+			return
+		}
+		
+		#If WinActive("ahk_class TfrmMyLifeMain")	;;;;;;;;;;;;注意AutoHotkey不支持#IfWinActive 和 #If 的嵌套，务必记得#if完，恢复之前的上下文
+	}
+	
 }
 
 ;-------------------------------------------------------------------------------
@@ -1388,6 +1069,14 @@
 		SendInput, !n{Tab}{Tab}{Tab}{Space}
 		return
 	
+	;文件夹被占用，无法删除时，查看是被谁占用的
+	^Del::
+		Clipboard := 
+		SendInput, ^1
+		ClipWait
+		commands = ("d:\Dropbox\Technical Backup\ProgramFiles.Trust\Handle 查看文件夹或文件 被哪个程序占用 而无法删除\handle64.exe" %Clipboard% & echo "直接taskkill /PID来结束进程")
+		runwait, %comspec% /k %commands%
+		return
 }
 
 ;-------------------------------------------------------------------------------
@@ -1501,34 +1190,30 @@
 		F1::Send, ^+{Tab}	;切换到前一标签
 		F2::Send, ^{Tab}	;切换到后一标签
 		
+		#if (not IME_GET() && WinActive("ahk_class MozillaWindowClass") )
+		h:: SendInput, ^h
+		#If WinActive("ahk_class MozillaWindowClass")
+		
 		;Diigo快捷键
 		F3::
 		{
 			Send, ^!b		;配合diigo的侧边栏
-			Sleep, 1000
-			文字=
-			文字=%文字%|<  >
-			(
-			0000_____00__00____________________000___00______00_________00_______
-			000000___00__00___________________00000__00______00_________00_______
-			00__000__00__00___0000___000______00_____00___00_00___000___00000____
-			00___00__00__00__00000__00000_____00_____00__000000__00000__000000__0
-			00___00__00__00_00__00__00__00____0000___00__00__00__00__00_00__00___
-			00___00__00__00__00000_000__00______000__00_000__00_0000000_00__00__0
-			00___00__00__00__0000___00__00_______00__00__00__00__00_____00__00_00
-			0000000__00__00__0000___000000___000000__00__000000__00__0__000000_00
-			00000____00__00__00000___0000_____0000___00__000000___0000__00000___0
-			________________00___00______________________________________________
-			________________000_00_______________________________________________
-			_________________0000________________________________________________
-			)
-
-			if 查找文字(41,85,文字,"*137",150000,150000,X,Y,OCR,0,0)
+			设定时间=%A_Now%
+			设定时间 += 5,Seconds
+			文字:=""
+			文字.="|<>69.w6M001lUM0k7sn000TA3060naMwQ31XMsy6AnDbkMAzDbtlaPAn3laNan6AnDiM7BnTqNlaNsn0NaNUnTsnD7szAzAbvy6NwS3lbswy800Mk0000000003g0000000000D00000000U"
+			Loop
 			{
-				CoordMode, mouse, Client
-				ControlClick, x170 y168, A  			;Click, 152, 170 但不移动鼠标
-				SendInput, +{Home}{BackSpace}
-			}
+				if 查找文字(41,85,150000,150000,文字,"*135",X,Y,OCR,0,0)
+				{
+					Sleep, 100
+					ControlClick, x170 y168, A  			;Click, 152, 170 但不移动鼠标
+					SendInput, +{Home}{BackSpace}
+					break
+				}
+				If A_Now > %设定时间%
+					break
+			}			
 			return
 		}
 		
@@ -1857,15 +1542,12 @@
 }
 
 ;-------------------------------------------------------------------------------
-;~ 桌面在最前端时，快捷键
+;~ @桌面在最前端时，快捷键
 ;-------------------------------------------------------------------------------
-#IfWinActive ahk_class WorkerW   ;不要用ahk_exe explorer.exe，会和资源管理器冲突
+#IfWinActive ahk_class (WorkerW|Progman)   ;不要用ahk_exe explorer.exe，会和资源管理器冲突
 {
 	;显示全局菜单
 	F1::Menu, WholeOSMenu, Show
-	
-	;显示MyLifeOrganized
-	F2::SendInput ^+!#m
 	
 	;双击esc，启用一系列夜间：启动迅雷、局域网同步、公网同步、定时关机
 	~Esc::
@@ -1886,7 +1568,7 @@
 }
 
 ;-------------------------------------------------------------------------------
-;~ 记事本Notepad/Notepad2.exe
+;~ @记事本@Notepad/Notepad2.exe
 ;-------------------------------------------------------------------------------
 #IfWinActive ahk_exe (notepad.exe|Notepad2.exe)
 {
@@ -1912,6 +1594,19 @@
 	F4:: SendInput, /{U+003A}Q{Right}
 	F5:: SendInput, /{U+003A}806{Right}
 	
+}
+
+
+;-------------------------------------------------------------------------------
+;~ @Everything
+;-------------------------------------------------------------------------------
+#IfWinActive ahk_exe Everything.exe
+{
+	^1::
+		SendInput, {AppsKey}
+		Sleep, 400
+		SendInput, f
+		return
 }
 
 ;-------------------------------------------------------------------------------
@@ -1995,7 +1690,7 @@
 }
 
 ;-------------------------------------------------------------------------------
-;~ 游戏 狼人杀 快捷键
+;~ 游戏 狼人杀 快捷键         ;注意里面的找字相关代码，已经失效了，以后要用的话，重新写一下
 ;-------------------------------------------------------------------------------
 #IfWinActive 狼人游戏
 {
@@ -2058,7 +1753,8 @@
 			CoordMode, Mouse, Relative
 			ControlClick, X473 Y193, ahk_id %active_id%,,,, NA			;点活跃窗口
 			Sleep, 1000
-			if 查找文字(498,221,文字,"*114",150000,150000,X,Y,OCR,0,0,active_id) {
+			;if 查找文字(498,221,文字,"*114",150000,150000,X,Y,OCR,0,0,active_id) 
+			{
 				WinActivate, ahk_id %active_id%
 				Sleep, 1000
 				CoordMode, Mouse
@@ -3402,19 +3098,7 @@ _____________00__0000____0_____0___0__0_______00__________0_____00___00
 }
 
 ;-------------------------------------------------------------------------------
-;~ 游戏 Stardew Valley 快捷键
-;-------------------------------------------------------------------------------
-#IfWinActive ahk_exe (StardewModdingAPI|StardewModding)
-{
-	;完全不管用，不知道为啥
-	/*q::SendPlay, m
-	e::SendInput, m
-	r::SendEvent, m
-	*/
-}
-
-;-------------------------------------------------------------------------------
-;~ 浏览器 全屏Flash 看视频时
+;~ 浏览器 全屏@Flash 看视频时
 ;-------------------------------------------------------------------------------
 #IfWinActive ahk_exe plugin-container.exe
 {
@@ -3422,7 +3106,7 @@ _____________00__0000____0_____0___0__0_______00__________0_____00___00
 }
 
 ;-------------------------------------------------------------------------------
-;~ 疯石
+;~ 游戏 @疯石
 ;-------------------------------------------------------------------------------
 #IfWinActive ahk_exe CrazyStoneDeepLearning.exe
 {
@@ -3430,9 +3114,9 @@ _____________00__0000____0_____0___0__0_______00__________0_____00___00
 		WinMove, A, , 665, 0
 		WinSet, AlwaysOnTop, Toggle, A
 		return
-	1::ControlClick, X700 Y210, A
-	2::ControlClick, X663 Y174, A
-	3::ControlClick, X720 Y253, A
+	1::ControlClick, X700 Y210, ahk_exe CrazyStoneDeepLearning.exe
+	2::ControlClick, X663 Y174, ahk_exe CrazyStoneDeepLearning.exe
+	3::ControlClick, X720 Y253, ahk_exe CrazyStoneDeepLearning.exe
 	
 	
 }
