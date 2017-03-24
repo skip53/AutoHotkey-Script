@@ -1570,9 +1570,11 @@
 			} Else IfMsgBox OK, {
 				Run, %A_LineFile%\..\..\Functions\nircmd-x64\nircmd.exe mutesysvolume 1
 				;用外部程序来执行静音，避免{Volume_Mute}和搜狗输入法的冲突，参见：http://ahk8.com/thread-2650.html
+				Run, "D:\Dropbox\Technical Backup\ProgramFiles.Trust\Shutdown8  定时关机\Shutdown8 关机.exe"
+				Sleep, 5000			;防止后面的程序，遮盖窗口
 				Run, "D:\TechnicalSupport\ProgramFiles.Untrust\Thunder Network\Thunder\Program\Thunder.exe"
 				Run, "C:\Users\LL\AppData\Roaming\Resilio Sync\Resilio Sync.exe"
-				Run, "D:\Dropbox\Technical Backup\ProgramFiles.Trust\Shutdown8  定时关机\Shutdown8 关机.exe"
+				Run, "D:\TechnicalSupport\ProgramFiles\Sandboxie\Start.exe" /box:5Dropbox "C:\ProgramData\Microsoft\Windows\Start Menu\程序\Dropbox\Dropbox.lnk"
 			}
 		}
 		return
@@ -1587,7 +1589,6 @@
 		if (A_ThisHotKey = A_PriorHotKey and A_TimeSincePriorHotkey < 500) 
 		{
 			SendInput, !{F4}
-			Sleep, 200
 			SendInput, n
 			;WinKill, A       ;不管用
 		}
