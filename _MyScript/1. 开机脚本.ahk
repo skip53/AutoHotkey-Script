@@ -9,7 +9,7 @@ SetDefaultMouseSpeed, 0		;设置在 Click 和 MouseMove/Click/Drag 中没有指�
 SetWinDelay, 0
 SetControlDelay, 0
 SendMode Input				;据说SendInput is the fastest send method.
-/*
+
 ;-------------------------------------------------------------------------------
 ;~ 开机自启程序
 ;-------------------------------------------------------------------------------
@@ -25,7 +25,7 @@ SendMode Input				;据说SendInput is the fastest send method.
 		Run, "D:\Dropbox\Technical Backup\ProgramFiles.Trust\SwitchHosts  各种host的工具，不止SwitchHosts，都统一放在这里了\Hosts tool for racaljk／hosts  可自动更新racaljk／hosts\tool_silent.exe"
 	}
 }
-*/
+
 ;-------------------------------------------------------------------------------
 ;~ 定期备份
 ;-------------------------------------------------------------------------------

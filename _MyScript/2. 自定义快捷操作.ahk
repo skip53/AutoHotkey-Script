@@ -75,6 +75,12 @@
 ;~ 函数部分
 ;-------------------------------------------------------------------------------
 {
+	;kill进程的方式, 来关闭窗口，因为WinKill有时还是不管用，比如针对notepad2
+	Processkill(WinTitle="A") {
+		WinGet, prid, PID, %WinTitle%
+		Process, Close, %prid%
+	}
+				
 	;Get memory usage of Process 获取一个进程的内存占用 → 用于监控Firefox内存
 	MemUsage(ProcName, Units="K") {
 		Process, Exist, %ProcName%
@@ -618,7 +624,7 @@
 		;双击esc退出焦点程序
 		~Esc::
 			if (A_ThisHotKey = A_PriorHotKey and A_TimeSincePriorHotkey < 500) 
-				Send, !{F4}
+				Processkill()
 			return
 
 		;恢复Tab键原本功能
@@ -1212,10 +1218,10 @@
 			设定时间=%A_Now%
 			设定时间 += 5,Seconds
 			文字:=""
-			文字.="|<>69.w6M001lUM0k7sn000TA3060naMwQ31XMsy6AnDbkMAzDbtlaPAn3laNan6AnDiM7BnTqNlaNsn0NaNUnTsnD7szAzAbvy6NwS3lbswy800Mk0000000003g0000000000D00000000U"
+			文字.="|<>53.0000Y0001XU1V80003bW32SIMeDTY64yttqSxMA9hVn5rPkMGO7YDir0kaoP8RBa1tD8SEM0A000000k1k0000078"
 			Loop
 			{
-				if 查找文字(41,85,150000,150000,文字,"*135",X,Y,OCR,0,0)
+				if 查找文字(33,113,150000,150000,文字,"*143",X,Y,OCR,0,0)
 				{
 					Sleep, 100
 					ControlClick, x170 y168, A  			;Click, 152, 170 但不移动鼠标
@@ -1223,7 +1229,7 @@
 					break
 				}
 				If A_Now > %设定时间%
-					break
+					MsgBox, 111
 			}			
 			return
 		}
@@ -1583,7 +1589,7 @@
 ;-------------------------------------------------------------------------------
 ;~ @记事本@Notepad/Notepad2.exe
 ;-------------------------------------------------------------------------------
-#IfWinActive ahk_exe (notepad.exe|Notepad2.exe)
+/*#IfWinActive ahk_exe (notepad.exe|Notepad2.exe)
 {
 	~Esc::
 		if (A_ThisHotKey = A_PriorHotKey and A_TimeSincePriorHotkey < 500) 
@@ -1594,6 +1600,7 @@
 		}
 		return
 }
+*/
 
 ;-------------------------------------------------------------------------------
 ;~ 千牛，阿里旺旺卖家版
