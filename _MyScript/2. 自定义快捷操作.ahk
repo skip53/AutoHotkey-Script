@@ -1221,15 +1221,15 @@
 			文字.="|<>53.0000Y0001XU1V80003bW32SIMeDTY64yttqSxMA9hVn5rPkMGO7YDir0kaoP8RBa1tD8SEM0A000000k1k0000078"
 			Loop
 			{
-				if 查找文字(33,113,150000,150000,文字,"*143",X,Y,OCR,0,0)
+				if 查找文字(33,113,150000,150000,文字,"*143",X,Y,OCR,0.3,0.3)
 				{
 					Sleep, 100
 					ControlClick, x170 y168, A  			;Click, 152, 170 但不移动鼠标
 					SendInput, +{Home}{BackSpace}
 					break
-				}
-				If A_Now > %设定时间%
-					MsgBox, 111
+				} 
+				;If A_Now > %设定时间%
+				;	MsgBox, 没找到啊
 			}			
 			return
 		}
