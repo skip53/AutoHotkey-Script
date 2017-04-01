@@ -2,6 +2,8 @@
 ;;; 声明：
 ;;; 1、用KeyTweak改键盘映射，capslock改为Numpad0了，否则做快捷键总是激活大小写
 ;;; 切换，很烦
+;;; 2、原生AutoHotkey不支持真正多线程(多个程序不能并行跑)，用AutoHotkey_H又嫌麻
+;;; 烦，所以改成多进程：全局程序另写脚本，再调用
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 ;-------------------------------------------------------------------------------
@@ -33,7 +35,7 @@
 	#InstallKeybdHook		;安装键盘和鼠标钩子 像Input和A_PriorKey，都需要钩子
 	#InstallMouseHook
 	SetTitleMatchMode Regex	;更改进程匹配模式为正则
-	#SingleInstance ignore	;决定当脚本已经运行时是否允许它再次运行。
+	#SingleInstance FORCE	;决定当脚本已经运行时是否允许它再次运行。
 	#Persistent				;持续运行不退出
 	#MaxThreadsPerHotkey 5
 	CoordMode, Mouse, Client	;鼠标坐标采用Client模式
@@ -47,12 +49,19 @@
 	TrayTip, 提示, 脚本已启动, , 1
 	Sleep, 1000
 	TrayTip
-	;return		;注：这里不能加return  原因搜索帮助文件的「自动执行段」
+	;return		;注：这里不能加return  原因搜索帮助文件的「自动执行段」：程序执行到return，就会停止，后面的行，不会再执行
+}
 
+;-------------------------------------------------------------------------------
+;~ 多进程 和 菜单
+;-------------------------------------------------------------------------------
+{
 	;最近不怎么用snagit了，先去掉这行
 	;Run, d:\BaiduYun\@\Software\AHKScript\_MyScript\非快捷键类 全局运行脚本（由开机脚本自动调用）.ahk
 	Run, %A_LineFile%\..\3. 快捷输入.ahk
-
+	Run, %A_LineFile%\..\4. 结束垃圾进程.ahk
+	Run, %A_LineFile%\..\5. 自动保存文件.ahk
+	
 	;注意：menu菜单的定义，必须在“自动执行段”
 	Menu, LangRenMenu, Add, 大厅中找房, 找狂欢版语音
 	Menu, LangRenMenu, Add, 占座#9, 占座#9
@@ -346,59 +355,18 @@
 }
 
 ;-------------------------------------------------------------------------------
-;~ 全局程序: 注意全局程序，必须写在#IfWinActive *前面* ，函数后面， 才能正确执行！
+;~ 控制当前运行是Unicode32版,若不是则切换 (U64虽然比U32运行更快，但这个脚本用U64总莫名故障)
 ;-------------------------------------------------------------------------------
 {
-	;-------------------------------------------------------------------------------
-	;~ 控制当前运行是Unicode64版,若不是则切换 (U64比U32运行更快，尽量用U64)
-	;-------------------------------------------------------------------------------
 	SplitPath A_AhkPath,, AhkDir
 	If ( !(A_PtrSize = 4 && A_IsUnicode ) ) {
-		U64 := AhkDir . "\AutoHotkeyU32.exe"
-		If (FileExist(U64)) {
-			Run %U64% "%A_LineFile%"
+		U32 := AhkDir . "\AutoHotkeyU32.exe"
+		If (FileExist(U32)) {
+			Run %U32% "%A_LineFile%"
 			ExitApp
 		} Else {
-			MsgBox 0x2010, AutoGUI, AutoHotkey 64-bit Unicode not found.
+			MsgBox 0x2010, AutoGUI, AutoHotkey 32-bit Unicode not found.
 			ExitApp
-		}
-	}
-	
-	;-------------------------------------------------------------------------------
-	;~ 自动结束 垃圾进程
-	;-------------------------------------------------------------------------------
-	trashProcess := ["DownloadSDKServer.exe", "SogouCloud.exe", "SpotifyWebHelper.exe"]			;目标进程名称 = 
-	Loop {
-		For index, value in trashProcess {
-			Process, Exist, %value%				;查找进程是否存在
-			if ( ErrorLevel != 0 ) {
-				Process, Close, %ErrorLevel%		;终止进程
-				if ( ErrorLevel = 0 )
-					MsgBox, 检测到垃圾进程，但我没有成功的结束它！
-			}
-			Sleep, 10000
-		}
-	}
-	
-	;-------------------------------------------------------------------------------
-	;~ 自动保存pdf等
-	;-------------------------------------------------------------------------------
-	窗口1上次保存时间:=A_TickCount-30*1000    ;使下面立即开始检测
-	
-	SetTimer, 自动保存, 5000  ;5秒钟检测一次，刚好可检测5秒内有没有键盘和鼠标操作
-	Return
-
-	; 自动保存函数
-	自动保存:
-	当前时间:=A_TickCount
-	; 如果存在该窗口，且距离上次保存已有5min
-	if WinExist("ahk_exe Acrobat.exe") and (当前时间-窗口1上次保存时间>120*1000)
-	{
-		; 窗口没有激活；或激活了但距离上次用户操作已有5s
-		if !WinActive() or ( WinActive() and (A_TimeIdlePhysical>5000) )
-		{
-			ControlSend, ahk_parent, {Control Down}s{Control Up}, ahk_exe Acrobat.exe
-			窗口1上次保存时间:=当前时间
 		}
 	}
 }
@@ -526,7 +494,7 @@
 	
 	;简单映射型 快捷键
 	{
-		~LButton & r::Reload
+		~LButton & r::Reload    ;子脚本已添加#SingleInstance FORCE 所以会自动跟随reload
 		~LButton & s::			;禁用脚本
 			Suspend, On			;注意suspend必须在第一行 否则当suspend状态下，这个开关键，本身也会被禁用
 			TrayTip, 提示, 已 [禁用] 脚本, , 1
@@ -660,6 +628,7 @@
 				{
 					SendInput, {F4}
 					WinWaitActive, ahk_class ENMainFrame, , 2
+					Sleep, 200
 					sendL("notebook:""1  Cabinet"" ")		;注意字符中的双引号要转义，不是\"，而是两个引号""
 				}
 				if CountStp = 2 ;按两次时...
