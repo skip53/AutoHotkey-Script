@@ -6,7 +6,7 @@
 SetTitleMatchMode Regex	;更改进程匹配模式为正则
 #Persistent				;持续运行不退出
 #NoTrayIcon				;隐藏托盘图标
-SendMode Input			;所有Send命令，统一采用SendInput
+SendMode Input			;所有Send命令，统一采用最快的SendInput
 
 trashProcess := ["DownloadSDKServer.exe", "SogouCloud.exe", "SpotifyWebHelper.exe"]			;目标进程名称 = 
 Loop {

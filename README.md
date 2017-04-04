@@ -33,7 +33,7 @@
 
 剪贴板内的图片，一键上传七牛云图床，并设置剪贴板为图片地址。
 
-Python 脚本修改自：[将图片上传到七牛云存储并直接返回markdown可用的图片链接](https://github.com/mjnhmd/markdown-upload-qiniu]mjnhmd/markdown-upload-qiniu)
+Python 脚本修改自：[将图片上传到七牛云存储并直接返回markdown可用的图片链接](https://github.com/mjnhmd/markdown-upload-qiniu)
 
 ### 3. 自动保存文件.ahk
 

@@ -10,7 +10,7 @@
 SetTitleMatchMode Regex	;更改进程匹配模式为正则
 #Persistent				;持续运行不退出
 #NoTrayIcon				;隐藏托盘图标
-SendMode Input			;所有Send命令，统一采用SendInput
+SendMode Input			;所有Send命令，统一采用最快的SendInput
 #Hotstring EndChars  `n		;编辑热字串的终止符
 
 #Include d:\Dropbox\Technical_Backup\AHKScript\Functions\regexHotString库，类似InputMagician\Hotstring.ahk

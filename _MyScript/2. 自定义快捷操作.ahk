@@ -12,8 +12,6 @@
 {
 	;提升性能相关的配置
 	#NoEnv						;不检查空变量是否为环境变量
-	;#KeyHistory 0				;不记录击键log
-	;ListLines Off				;不记录击键log
 	SetBatchLines, -1			;行之间运行不留时间空隙,默认是有10ms的间隔
 	SetKeyDelay, -1, -1			;发送按键不留时间空隙
 	SetMouseDelay, -1			;每次鼠标移动或点击后自动的延时=0   
@@ -21,9 +19,9 @@
 	;如果以前录制的脚本,因延时变短,出问题,命令 MouseClick, MouseMove 和 MouseClickDrag 都提供了一个用来设置鼠标速度代替默认速度的参数.用它们自己的参数,设定移动速度
 	SetWinDelay, 0
 	SetControlDelay, 0
-	SendMode Input				;据说SendInput is the fastest send method.
-	;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+	SendMode Input				;;所有Send命令，统一采用最快的SendInput
 
+	;include外部函数
 	#Include %A_LineFile%\..\..\Functions\WinClip\WinClipAPI.ahk
 	#Include %A_LineFile%\..\..\Functions\WinClip\WinClip.ahk
 	;#Include %A_LineFile%\..\..\Functions\url编码解码库 url_encode_decode\url_encode_decode.ahk	;该脚本必须以ANSI运行
@@ -32,17 +30,17 @@
 	#Include %A_LineFile%\..\..\Functions\GetActiveBrowserURL 获取浏览器窗口的地址 等信息\GetActiveBrowserURL.ahk
 	#Include %A_LineFile%\..\..\辅助工具\快捷抓取、查找屏幕文字／图像字符串\函数部分 v5.6.ahk
 
-	#InstallKeybdHook		;安装键盘和鼠标钩子 像Input和A_PriorKey，都需要钩子
+	;性能以外的脚本配置
+	#InstallKeybdHook			;安装键盘和鼠标钩子 像Input和A_PriorKey，都需要钩子
 	#InstallMouseHook
-	SetTitleMatchMode Regex	;更改进程匹配模式为正则
-	#SingleInstance FORCE	;决定当脚本已经运行时是否允许它再次运行。
-	#Persistent				;持续运行不退出
+	SetTitleMatchMode Regex		;更改进程匹配模式为正则
+	#SingleInstance FORCE		;决定当脚本已经运行时是否允许它再次运行。
+	#Persistent					;持续运行不退出
 	#MaxThreadsPerHotkey 5
 	CoordMode, Mouse, Client	;鼠标坐标采用Client模式
 	;SetCapsLockState,AlwaysOff
-	CountStp := 0	;一键多用的计时器
-	
-	#Hotstring EndChars  `n				;编辑热字串的终止符
+	CountStp := 0				;一键多用的计时器
+	#Hotstring EndChars  `n		;编辑热字串的终止符
 
 	Menu, Tray, Icon, %A_LineFile%\..\Icon\自定义快捷操作.ico, , 1
 	Menu, tray, tip, 自定义快捷键、自动保存 by LL
@@ -53,22 +51,19 @@
 }
 
 ;-------------------------------------------------------------------------------
-;~ 多进程 和 菜单
+;~ 多进程 和 @菜单
 ;-------------------------------------------------------------------------------
 {
-	;最近不怎么用snagit了，先去掉这行
-	;Run, d:\BaiduYun\@\Software\AHKScript\_MyScript\非快捷键类 全局运行脚本（由开机脚本自动调用）.ahk
 	Run, %A_LineFile%\..\3. 快捷输入.ahk
 	Run, %A_LineFile%\..\4. 结束垃圾进程.ahk
 	Run, %A_LineFile%\..\5. 自动保存文件.ahk
 	Run, %A_LineFile%\..\6. 图片上传七牛云.ahk
-	Run, %A_LineFile%\..\7. 关闭垃圾弹窗.ahk
 	
 	;注意：menu菜单的定义，必须在“自动执行段”
 	Menu, LangRenMenu, Add, 大厅中找房, 找狂欢版语音
-	Menu, LangRenMenu, Add, 占座#9, 占座#9
-	Menu, LangRenMenu, Add, 占座#10, 占座#10
-	Menu, LangRenMenu, Add, 占座#18, 占座#18
+	Menu, LangRenMenu, Add, 占座#9
+	Menu, LangRenMenu, Add, 占座#10
+	Menu, LangRenMenu, Add, 占座#18
 	Menu, LangRenMenu, Add			; 添加分隔线
 	Menu, LangRenMenu, Add, &F：快速第一个投票, 快速第一个投票
 	Menu, LangRenMenu, Add, &B：全场标记村民, 全场标记村民
@@ -80,7 +75,8 @@
 	Menu, LangRenMenu, Add, &5：【没时间思考】, 第一个发言没时间
 	Menu, LangRenMenu, Add, &6：【不归票】, 局势焦灼
 	
-	Menu, WholeOSMenu, Add, 注册表-定位路径, 注册表-定位路径
+	Menu, WholeOSMenu, Add, 注册表-定位路径			;如果省略 Label-or-Submenu, 那么将使用 MenuItemName 同时作为标签和菜单项的名称.
+	Menu, WholeOSMenu, Add, 不常用的快捷操作
 }
 
 ;-------------------------------------------------------------------------------
@@ -382,15 +378,27 @@
 	;WinGetTitle, abc, A
 	;MsgBox, % abc
 	;return
+	
+	;临时
+	;Tab & o::
 }
 
 ;-------------------------------------------------------------------------------
 ;~ 全局键位
 ;-------------------------------------------------------------------------------
 {
-	;临时
-	Tab & o::
-	;q::SendInput, p
+	;called支持单个程序、多个程序、函数
+	;appStarter (chars, appName, called) {
+		;创建menu，menu里面加上appName和appPath
+	;	Menu, ttt,
+		;动态创建热键，调用afterTriger()
+		
+	;}
+	
+	;afterTriger(chars, appName, appPath) {
+		
+		
+	;}
 
 	;常用软件快速启动
 	{
@@ -407,16 +415,14 @@
 		#g::Run "D:\TechnicalSupport\ProgramFiles\CentBrowser\chrome.exe"
 		#n::Run notepad
 		#z::Run "d:\TechnicalSupport\ProgramFiles\AutoHotkey\SciTE\SciTE.exe"
-		;#z::Run "d:\TechnicalSupport\ProgramFiles\Total Commander 8.51a\plugins\wlx\Syn2\Syn.exe" "d:\BaiduYun\@\Software\AHKScript\_MyScript\自定义快捷操作.ahk"
 		#x::Run "C:\Program Files (x86)\Microsoft Office\root\Office16\EXCEL.EXE"
-		;#e::Run "D:\TechnicalSupport\ProgramFiles\Evernote\Evernote\Evernote.exe"
 		#e::Run "D:\TechnicalSupport\ProgramFiles\Evernote\Evernote\Evernote.exe
 		#y::Run "D:\Dropbox\Technical_Backup\ProgramFiles.Untrust\YodaoDict\YodaoDict.exe"
 		#m::Run resmon
 		;^#c::Run, "d:\BaiduYun\Technical_Backup\ProgramFiles\ColorPic 4.1  屏幕取色小插件 颜色 色彩 配色\#ColorPic.exe"
 		;^#s::Run, "d:\BaiduYun\Technical_Backup\ProgramFiles\#Fast Run\st.lnk"
 		>!m::Run, "D:\TechnicalSupport\Sandbox\LL\1LongAndTrust\drive\D\TechnicalSupport\Users\LL\AppData\Roaming\Spotify\Spotify.exe"
-		~LButton & F2::SendInput, ^+!#m
+		;~LButton & F2::SendInput, ^+!#m
 		#s::
 			Run, "d:\Dropbox\Technical_Backup\ProgramFiles.Trust\#Book Tools\Sx_Renamer\Sx_Renamer.exe"
 			Run, "d:\Dropbox\Technical_Backup\ProgramFiles.Trust\#Book Tools\Pdg2Pic\Pdg2Pic.exe"
@@ -449,6 +455,7 @@
 		Tab & s:: Send, ▶{Space}			;	右三角
 		Tab & d:: Send, •{Space}			;	圆点
 		;Tab & f:: Send, ■{Space}			;	方点
+		;Tab & g:: Send, √{Space}
 		Tab & f:: Send, ●{Space}			;	大圆点
 		Tab & 1:: Send, ①{Space}
 		Tab & 2:: Send, ②{Space}
@@ -466,10 +473,6 @@
 		Numpad0 & 6:: Send, ❻{Space}
 		Numpad0 & 7:: Send, ❼{Space}
 		Numpad0 & 8:: Send, ❽{Space}
-		
-		;Tab & g:: Send, √{Space}
-		;多数时候，回车紧接句号，说明前面输入的是英文，那句号应该是英文的点，所以自动修改下
-		
 		
 		;鼠标移动到任务栏，滚动中键，则调节音量。但效果不理想，和搜狗输入法冲突，会输入'b'和'c'，且有难听的声音提示。换用独立工具Volumouse了
 		/*#If MouseIsOver("ahk_class Shell_TrayWnd")
@@ -497,6 +500,10 @@
 		#If
 		*/
 }
+	;不常用的快捷操作
+	不常用的快捷操作:
+		
+		return
 	
 	;简单映射型 快捷键
 	{
