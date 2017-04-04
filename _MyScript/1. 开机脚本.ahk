@@ -16,13 +16,14 @@ SendMode Input				;据说SendInput is the fastest send method.
 {
 	
 	Run, "D:\TechnicalSupport\ProgramFiles\cow-win64-0.9.6 不要用0.9.8版本，有连接reset的bug\cow-taskbar.exe"
-	Run, "D:\Dropbox\Technical Backup\shadowsocks-qt5 因为cow只提供http，无socks5和https接口，故专开一下客户端。不用了，可以用privoxy模拟socks5\ss-qt5.exe"
+	Run, "D:\Dropbox\Technical_Backup\shadowsocks-qt5 因为cow只提供http，无socks5和https接口，故专开一下客户端。不用了，可以用privoxy模拟socks5\ss-qt5.exe"
 	Run, "D:\TechnicalSupport\ProgramFiles\AutoHotkey\AutoHotkeyU32.exe" "%A_LineFile%\..\2. 自定义快捷操作.ahk"
 	Run, "D:\TechnicalSupport\ProgramFiles\MyLifeOrganized.net\MLO\mlo.exe"
+	Run, "D:\TechnicalSupport\ProgramFiles\Sandboxie\Start.exe" /box:1LongAndTrust "d:\Dropbox\Technical_Backup\ProgramFiles.Trust\douban\firefox\firefox.exe"
 	
 	;如果是星期天，则更新host
 	if ( A_WDay = 1 ) {
-		Run, "D:\Dropbox\Technical Backup\ProgramFiles.Trust\SwitchHosts  各种host的工具，不止SwitchHosts，都统一放在这里了\Hosts tool for racaljk／hosts  可自动更新racaljk／hosts\tool_silent.exe"
+		Run, "D:\Dropbox\Technical_Backup\ProgramFiles.Trust\SwitchHosts  各种host的工具，不止SwitchHosts，都统一放在这里了\Hosts tool for racaljk／hosts  可自动更新racaljk／hosts\tool_silent.exe"
 	}
 }
 
@@ -32,7 +33,7 @@ SendMode Input				;据说SendInput is the fastest send method.
 {
 	;压缩包方式备份
 	packbackup(backupdir, backupname, targetdir, interval) {
-		7zdir := "d:\Dropbox\Technical Backup\ProgramFiles.Trust\7z1604-extra  7zip的单独命令行版本\7za.exe"
+		7zdir := "d:\Dropbox\Technical_Backup\ProgramFiles.Trust\7z1604-extra  7zip的单独命令行版本\7za.exe"
 		SetWorkingDir, %backupdir%
 		FileGetTime, timestamp, %backupname%, M
 		FormatTime, date, %timestamp%, yyyyMMdd
@@ -49,7 +50,7 @@ SendMode Input				;据说SendInput is the fastest send method.
 	packbackup("d:\Storage\Software\CentBrowser Backup", "Chrome&CentBrowser_Backup_30days.zip", "d:\TechnicalSupport\ProgramFiles\CentBrowser\User Data\", "25")
 	packbackup("d:\Storage\Software\Totalcmd Backup", "Total Commander newest backup.zip", "d:\TechnicalSupport\ProgramFiles\Total Commander 8.51a\", "30")
 	
-	FileCopy, C:\Windows\Sandboxie.ini, d:\Dropbox\Technical Backup\Sandboxie.ini.bak, 1			;备份Sandboxie配置
+	FileCopy, C:\Windows\Sandboxie.ini, d:\Dropbox\Technical_Backup\Sandboxie.ini.bak, 1			;备份Sandboxie配置
 }
 
 ExitApp

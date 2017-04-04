@@ -6,6 +6,7 @@
 SetTitleMatchMode Regex	;更改进程匹配模式为正则
 #Persistent				;持续运行不退出
 #NoTrayIcon				;隐藏托盘图标
+SendMode Input			;所有Send命令，统一采用SendInput
 
 窗口1上次保存时间:=A_TickCount-30*1000    ;使下面立即开始检测
 

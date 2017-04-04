@@ -26,8 +26,8 @@
 
 	#Include %A_LineFile%\..\..\Functions\WinClip\WinClipAPI.ahk
 	#Include %A_LineFile%\..\..\Functions\WinClip\WinClip.ahk
-	;#Include %A_LineFile%\..\..\Functions\url_encode_decode.ahk	;该脚本必须以ANSI运行
-	#Include %A_LineFile%\..\..\Functions\TrayIcon by FanaticGuru.ahk
+	;#Include %A_LineFile%\..\..\Functions\url编码解码库 url_encode_decode\url_encode_decode.ahk	;该脚本必须以ANSI运行
+	#Include %A_LineFile%\..\..\Functions\TrayIcon library 操纵右下角 系统托盘区 的图标，可右键点击调出菜单\TrayIcon by FanaticGuru.ahk
 	#Include %A_LineFile%\..\..\Functions\WinHttpRequest 网络函数 HTTP get post\WinHttpRequest.ahk
 	#Include %A_LineFile%\..\..\Functions\GetActiveBrowserURL 获取浏览器窗口的地址 等信息\GetActiveBrowserURL.ahk
 	#Include %A_LineFile%\..\..\辅助工具\快捷抓取、查找屏幕文字／图像字符串\函数部分 v5.6.ahk
@@ -61,6 +61,8 @@
 	Run, %A_LineFile%\..\3. 快捷输入.ahk
 	Run, %A_LineFile%\..\4. 结束垃圾进程.ahk
 	Run, %A_LineFile%\..\5. 自动保存文件.ahk
+	Run, %A_LineFile%\..\6. 图片上传七牛云.ahk
+	Run, %A_LineFile%\..\7. 关闭垃圾弹窗.ahk
 	
 	;注意：menu菜单的定义，必须在“自动执行段”
 	Menu, LangRenMenu, Add, 大厅中找房, 找狂欢版语音
@@ -77,6 +79,7 @@
 	Menu, LangRenMenu, Add, &4：【问归】, 问归
 	Menu, LangRenMenu, Add, &5：【没时间思考】, 第一个发言没时间
 	Menu, LangRenMenu, Add, &6：【不归票】, 局势焦灼
+	
 	Menu, WholeOSMenu, Add, 注册表-定位路径, 注册表-定位路径
 }
 
@@ -375,7 +378,10 @@
 ;~ test部分: 检测某函数的作用，临时代码段
 ;-------------------------------------------------------------------------------
 {
-	
+	;5::
+	;WinGetTitle, abc, A
+	;MsgBox, % abc
+	;return
 }
 
 ;-------------------------------------------------------------------------------
@@ -405,21 +411,21 @@
 		#x::Run "C:\Program Files (x86)\Microsoft Office\root\Office16\EXCEL.EXE"
 		;#e::Run "D:\TechnicalSupport\ProgramFiles\Evernote\Evernote\Evernote.exe"
 		#e::Run "D:\TechnicalSupport\ProgramFiles\Evernote\Evernote\Evernote.exe
-		#y::Run "d:\TechnicalSupport\ProgramFiles\YodaoDict\YodaoDict.exe"
+		#y::Run "D:\Dropbox\Technical_Backup\ProgramFiles.Untrust\YodaoDict\YodaoDict.exe"
 		#m::Run resmon
-		;^#c::Run, "d:\BaiduYun\Technical Backup\ProgramFiles\ColorPic 4.1  屏幕取色小插件 颜色 色彩 配色\#ColorPic.exe"
-		;^#s::Run, "d:\BaiduYun\Technical Backup\ProgramFiles\#Fast Run\st.lnk"
+		;^#c::Run, "d:\BaiduYun\Technical_Backup\ProgramFiles\ColorPic 4.1  屏幕取色小插件 颜色 色彩 配色\#ColorPic.exe"
+		;^#s::Run, "d:\BaiduYun\Technical_Backup\ProgramFiles\#Fast Run\st.lnk"
 		>!m::Run, "D:\TechnicalSupport\Sandbox\LL\1LongAndTrust\drive\D\TechnicalSupport\Users\LL\AppData\Roaming\Spotify\Spotify.exe"
 		~LButton & F2::SendInput, ^+!#m
 		#s::
-			Run, "d:\Dropbox\Technical Backup\ProgramFiles.Trust\#Book Tools\Sx_Renamer\Sx_Renamer.exe"
-			Run, "d:\Dropbox\Technical Backup\ProgramFiles.Trust\#Book Tools\Pdg2Pic\Pdg2Pic.exe"
+			Run, "d:\Dropbox\Technical_Backup\ProgramFiles.Trust\#Book Tools\Sx_Renamer\Sx_Renamer.exe"
+			Run, "d:\Dropbox\Technical_Backup\ProgramFiles.Trust\#Book Tools\Pdg2Pic\Pdg2Pic.exe"
 			;Run ABBYY Screenshot Reader
 			return
 		;录制gif
 		/*#!s::
-			Run "d:\BaiduYun\Technical Backup\ProgramFiles\keycastow 显示击键按键，录制屏幕时很有用\keycastow.exe"
-			Run "d:\BaiduYun\Technical Backup\ProgramFiles\#Repository\ScreenToGif 1.4.1 屏幕录制gif\$$ScreenToGif - Preview 11 屏幕录制gif.exe"
+			Run "d:\BaiduYun\Technical_Backup\ProgramFiles\keycastow 显示击键按键，录制屏幕时很有用\keycastow.exe"
+			Run "d:\BaiduYun\Technical_Backup\ProgramFiles\#Repository\ScreenToGif 1.4.1 屏幕录制gif\$$ScreenToGif - Preview 11 屏幕录制gif.exe"
 			return
 			*/
 		#t::
@@ -535,7 +541,7 @@
 		注册表-定位路径:
 			; 注册表的HKEY_CURRENT_USER/Software/Microsoft/Windows/CurrentVersion/Applets/Regedit
 			; 下的LastKey项保存了上一次浏览的注册表项位置，所以在打开注册表编辑器前修改它就行了
-			InputBox, NewLastKey, 注册表自动定位工具, 请输入要定位到的路径, , 800, 130
+			InputBox, NewLastKey, 请输入欲定位的注册表路径(!!末尾不能含斜杠!!), , 800, 130
 			IfWinExist, 注册表编辑器 ahk_class RegEdit_RegEdit	
 			{
 				WinClose
@@ -645,9 +651,8 @@
 ;-------------------------------------------------------------------------------
 #IfWinActive ahk_class (ENSingleNoteView|ENMainFrame)
 {
-	;快捷键: 非编辑器部分
+	;快捷输入
 	{
-		
 		;en的搜索不支持特殊字符，特快捷输入这些国际字母，以变相支持特殊字符
 		` & 1::SendInput, {U+0069}{U+006E}{U+0074}{U+0069}{U+0074}{U+006C}{U+0065}{U+003A}		;输入intitle:，为了避免输入法影响，用unicode输入
 		` & 2::SendInput, Δ{Space}
@@ -662,10 +667,15 @@
 		$`::SendInput, ``
 		+`::SendInput, ~{Shift}
 		~^`::SendInput, ^`
-		
+	}
+	
+	;操作类快捷键
+	{
 		^Space::controlsend, , ^{Space}, A   	;简化格式
-		F1::Menu, LangRenMenu, Show
-		F3::SendInput, ^!t				;批量打标签
+		;F1::Menu, LangRenMenu, Show
+		F1::MsgBox % "Ctrl + Alt + A 	切换用户`nF10 	显示/隐藏左侧边栏`nF11 	显示/隐藏笔记列表`nCtrl + Q 	快捷搜索`nShift + Alt + T 	跳转到标签??`nAlt + Shift + D 	插入日期和时间`nAlt + F2 	搜索标签"
+		;F3::SendInput, ^!t				;批量打标签  Assign界面不支持筛选标签，不要用了
+		F3::SendInput, !{F2}				;批量打标签（搜索标签，支持拖拽）
 		Numpad0 & r::SendInput !vpb		;显示回收站
 		~LButton & a::SendInput, ^!a	;切换账户
 		
@@ -735,30 +745,32 @@
 		
 		;v6版本，鼠标点击方式，实现修改文字颜色
 		evernoteMouseChangeColor(r, g, b) {
-			CoordMode, Mouse, Screen	;鼠标坐标，临时采用全屏幕模式，否则鼠标不能回归原位
+			CoordMode, Mouse, Screen	;鼠标坐标全屏幕模式，方便鼠标回归原位
 			MouseGetPos, xpos, ypos 
-			CoordMode, Mouse, Client	;鼠标坐标，返回Client模式
-			IfWinActive, ahk_class ENMainFrame 
+			文字:=""
+			文字.="|<>52.0000300000000200000000401zzU007k03tw000V0073U002400840008k0000000R0008"
+			if 查找文字(929,181,150000,150000,文字,"*147",X,Y,OCR,0.2,0.2)
 			{
-				Click 890, 159		;点击颜色按钮
-				Click 935, 341		;点击更多颜色
-				;严重依赖窗口视图相对位置，编辑区域中界限，设定为表格刚刚消失不见时的位置，接近于屏幕竖直中线
+				CoordMode, Mouse
+				Click, %X%, %Y%		;点击颜色按钮
+				Y1 := Y + 180
+				Click, %X%, %Y1%	;点击更多颜色
 			}
-			IfWinActive, ahk_class ENSingleNoteView
+			else
 			{
-				Click 231, 121		;点击颜色按钮
-				Click 262, 304		;点击更多颜色
+				MsgBox, 没有找到颜色选择框,找字模块失败!
 			}
 			;SendL("M")			;进入更多颜色		
-			Sleep, 50
+			WinWait, 颜色
+			WinMove, 10, 10
+			CoordMode, Mouse, Client	;鼠标坐标Client模式
 			Click, 116, 333		;进入自定义颜色
 			SendInput, {Tab}{Tab}{Tab}
 			SendInput %r%{Tab}%g%{Tab}%b%{Tab}{Space}
 			Click, 21, 259		;点击设定好自定义颜色
 			SendInput, {Tab}{Space}
-			CoordMode, Mouse, Screen	;鼠标坐标，继续改回全屏幕模式，方便移动鼠标
+			CoordMode, Mouse, Screen	;鼠标坐标全屏幕模式
 			MouseMove, %xpos%, %ypos%, 0
-			CoordMode, Mouse, Client	;鼠标坐标，继续返回Client模式
 			return
 		}
 		
@@ -1062,7 +1074,7 @@
 		Clipboard := 
 		SendInput, ^1
 		ClipWait
-		commands = ("d:\Dropbox\Technical Backup\ProgramFiles.Trust\Handle 查看文件夹或文件 被哪个程序占用 而无法删除\handle64.exe" %Clipboard% & echo "直接taskkill /PID来结束进程")
+		commands = ("d:\Dropbox\Technical_Backup\ProgramFiles.Trust\Handle 查看文件夹或文件 被哪个程序占用 而无法删除\handle64.exe" %Clipboard% & echo "直接taskkill /PID来结束进程")
 		runwait, %comspec% /k %commands%
 		return
 }
@@ -1328,6 +1340,14 @@
 }
 
 ;-------------------------------------------------------------------------------
+;~ @豆瓣 桌面客户端快捷键 （伪Firefox）
+;-------------------------------------------------------------------------------
+#IfWinActive Mozilla Firefox \[#\]
+{
+	MButton:: SendInput, {LButton}
+}
+
+;-------------------------------------------------------------------------------
 ;~ google @chrome快捷键
 ;-------------------------------------------------------------------------------
 #IfWinActive ahk_class Chrome_WidgetWin_1
@@ -1545,7 +1565,7 @@
 			} Else IfMsgBox OK, {
 				Run, %A_LineFile%\..\..\Functions\nircmd-x64\nircmd.exe mutesysvolume 1
 				;用外部程序来执行静音，避免{Volume_Mute}和搜狗输入法的冲突，参见：http://ahk8.com/thread-2650.html
-				Run, "D:\Dropbox\Technical Backup\ProgramFiles.Trust\Shutdown8  定时关机\Shutdown8 关机.exe"
+				Run, "D:\Dropbox\Technical_Backup\ProgramFiles.Trust\Shutdown8  定时关机\Shutdown8 关机.exe"
 				Sleep, 5000			;防止后面的程序，遮盖窗口
 				Run, "D:\TechnicalSupport\ProgramFiles.Untrust\Thunder Network\Thunder\Program\Thunder.exe"
 				Run, "C:\Users\LL\AppData\Roaming\Resilio Sync\Resilio Sync.exe"

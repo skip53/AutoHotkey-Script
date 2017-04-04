@@ -1,57 +1,26 @@
 ﻿;MsgBox, 11123333
+#SingleInstance force
 
-^1::
-Tick := 600
-SetTimer, Timer1, 1000
-Return
-Timer1:
-if Tick--
-Tooltip, % Format("{:02d}:{:02d}", Tick/60 , Mod(Tick,60)), 50, 10
-else
-{
-SetTimer, Timer1, Off
-SoundBeep, 4000, 2000
-Tooltip
-}
-Return
+;Run % comspec . A_Space . "Python" . A_Space .  """d:\test test\1.py"""
+;Run % comspec . A_Space . "Python" . A_Space . Chr(34) . "d:\test test\1.bat" . Chr(34)
 
+;MsgBox, %comspec% " Python ""d:\Program Files\1.py"""
+;MsgBox % comspec . " Python ""d:\Program Files\1.py"""
 
+;Run % "Python" . A_Space .  """d:\Program Files\1.py"""
+;Run % """d:\test test\1.bat"""
 
+#Include d:\Dropbox\Technical_Backup\AHKScript\Functions\regexHotString库，类似InputMagician\Hotstring.ahk
 
-
-ProcessList=
-(
-BESTplayer.exe|1800
-TimeOff.exe|3600
-taskmgr.exe|10
-)
-
-SetTimer, GameCheck, 1000	; 1-second timer  每秒运行一次
+Hotstring("(\d+)\/(\d+)%", "percent",3)
 return
 
-GameCheck:
-IniRead, today, cfg.ini, LastDay, Day		;读取日期
-if (today <> SubStr(A_now,1,8))				;和当前日期不符
-{
-	today := SubStr(A_now,1,8)				;更新today为今天
-	loop, parse, ProcessList, `n, `r
-		IniWrite, 0, cfg.ini, Counter, % StrSplit(A_LoopField,"|").1
-	IniWrite, % SubStr(A_now,1,8), cfg.ini, LastDay, Day
-}
-
-loop, parse, ProcessList, `n, `r
-{
-	i := A_Index
-	thisProcess := StrSplit(A_LoopField,"|").1
-	ProcessLimit%i% := StrSplit(A_LoopField,"|").2
-	IniRead, SecCounter%i%, cfg.ini, Counter, % thisProcess
-	Process, Exist, % thisProcess
-	if ErrorLevel
-	{
-		SecCounter%i% := SecCounter%i% ? SecCounter%i%+1 : 1
-		IniWrite, % SecCounter%i%, cfg.ini, Counter, % thisProcess
-		if (SecCounter%i% >= ProcessLimit%i%)	; if more than 30 minutes
-			Process, Close, % thisProcess
-	}
-}
+percent:
+; now $ is a match object.
+sendInput, % Round(($.Value(1)/$.Value(2))*100)
+; 2/2% -> 100
+; 70/100 -> 70%
 return
+
+::tc::TotalCommander
+::ahk::AutoHotkey
