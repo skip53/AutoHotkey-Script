@@ -1,7 +1,5 @@
 ﻿;提升性能相关的配置
 #NoEnv						;不检查空变量是否为环境变量
-;#KeyHistory 0				;不记录击键log
-;ListLines Off				;不记录击键log
 SetBatchLines, -1			;行之间运行不留时间空隙,默认是有10ms的间隔
 SetKeyDelay, -1, -1			;发送按键不留时间空隙
 SetMouseDelay, -1			;每次鼠标移动或点击后自动的延时=0   
@@ -14,17 +12,12 @@ SendMode Input				;据说SendInput is the fastest send method.
 ;~ 开机自启程序
 ;-------------------------------------------------------------------------------
 {
-	
 	Run, "D:\TechnicalSupport\ProgramFiles\cow-win64-0.9.6 不要用0.9.8版本，有连接reset的bug\cow-taskbar.exe"
 	Run, "D:\Dropbox\Technical_Backup\shadowsocks-qt5 因为cow只提供http，无socks5和https接口，故专开一下客户端。不用了，可以用privoxy模拟socks5\ss-qt5.exe"
 	Run, "D:\TechnicalSupport\ProgramFiles\AutoHotkey\AutoHotkeyU32.exe" "%A_LineFile%\..\2. 自定义快捷操作.ahk"
 	Run, "D:\TechnicalSupport\ProgramFiles\MyLifeOrganized.net\MLO\mlo.exe"
 	Run, "D:\TechnicalSupport\ProgramFiles\Sandboxie\Start.exe" /box:1LongAndTrust "d:\Dropbox\Technical_Backup\ProgramFiles.Trust\douban\firefox\firefox.exe"
 	
-	;如果是星期天，则更新host
-	if ( A_WDay = 1 ) {
-		Run, "D:\Dropbox\Technical_Backup\ProgramFiles.Trust\SwitchHosts  各种host的工具，不止SwitchHosts，都统一放在这里了\Hosts tool for racaljk／hosts  可自动更新racaljk／hosts\tool_silent.exe"
-	}
 }
 
 ;-------------------------------------------------------------------------------

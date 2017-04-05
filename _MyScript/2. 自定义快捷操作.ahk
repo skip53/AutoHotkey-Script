@@ -387,19 +387,7 @@
 ;~ 全局键位
 ;-------------------------------------------------------------------------------
 {
-	;called支持单个程序、多个程序、函数
-	;appStarter (chars, appName, called) {
-		;创建menu，menu里面加上appName和appPath
-	;	Menu, ttt,
-		;动态创建热键，调用afterTriger()
-		
-	;}
 	
-	;afterTriger(chars, appName, appPath) {
-		
-		
-	;}
-
 	;常用软件快速启动
 	{
 		;配合Listary快速启动
