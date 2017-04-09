@@ -43,9 +43,7 @@ Python 脚本修改自：[将图片上传到七牛云存储并直接返回markdown可用的图片链接](http
 
 某些常驻的垃圾进程：如搜狗输入法的`SogouCloud.exe`、Spotify的`SpotifyWebHelper.exe`等，自动结束进程。
 
-### 5. 关闭垃圾弹窗.ahk
 
-自动关闭迅雷、QQ、搜狗等软件，弹出的骚扰窗口、右下角广告等推送（自行添加`WinTitle`）。
 
 
 

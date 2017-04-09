@@ -4,6 +4,7 @@
 ;~ 该python脚本调用的win32clipboard，是pywin32的一个包，安装方式：
 ;~ https://sourceforge.net/projects/pywin32/files/
 ;~ 注意对应版本
+;~ 另，需安装七牛库：pip install qiniu
 ;-------------------------------------------------------------------------------
 
 #SingleInstance FORCE	;决定当脚本已经运行时是否允许它再次运行,记得用force，这样主脚本reload时，子脚本也自动reload了
@@ -36,6 +37,13 @@ saveImagetoFile(pathwithoutSlash, ext := "png", open := false) {
 	path := saveImagetoFile(path, "png")
 	
 	;上传
-	Run %comspec%  /c "Python d:\Dropbox\Technical_Backup\AHKScript\其它语言函数or库\图片上传七牛\upload_qiniu.py %path%"
+	Run %comspec%  /c "Python d:\Dropbox\Technical_Backup\AHKScript\其它语言函数or库\图片上传七牛\upload_qiniu_clipborad.py %path%"
 	;Run, % "python ""d:\test test\upload_qiniu.py""" . A_Space . path     ;如果路径有空格，就这样写
+	return
+
+#o::
+	Clipboard := 
+	send, ^c
+	clipwait
+	Run %comspec%  /c "d:\Dropbox\Technical_Backup\AHKScript\其它语言函数or库\图片上传七牛\upload_qiniu_path.py %Clipboard%" /p
 	return
