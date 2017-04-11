@@ -1,4 +1,8 @@
-﻿;~ Class A {
+﻿#SingleInstance FORCE	;决定当脚本已经运行时是否允许它再次运行,记得用force，这样主脚本reload时，子脚本也自动reload了
+SetTitleMatchMode Regex	;更改进程匹配模式为正则
+SendMode Input			;所有Send命令，统一采用最快的SendInput
+
+;~ Class A {
 	;~ Static x := 1
 	;~ y := 2
 	;~ __New() {
@@ -11,9 +15,9 @@
 		;~ __New() {
 			;~ this.subz := 6
 		;~ }
-		getParent() {
-			return this
-		}
+		;~ getParent() {
+			;~ return this
+		;~ }
 	;~ }
 ;~ }
 ;~ B := A, C := new A, D := new C.sub
@@ -31,37 +35,15 @@
 
 
 
-;~ x(z) {
-	;~ return z
-;~ }
-
-;~ y(ByRef bingo) {
-	;~ MsgBox, % bingo("111")
-;~ }
-
-;~ y(x)
-
-
-
-;~ class a {
-	;~ x := 1
-	;~ class b {
-		;~ y := 2
-	;~ }
-;~ }
-
-;~ instA := new a
-;~ MsgBox % instA.x
-;~ instB := new instA.b
-;~ instB := new a.b
-;~ MsgBox % instB.y	;能正常弹出2吗？
-
-class a {
-	b() {
-		MsgBox, 111
+class funcC {
+	Call(obj, str) {
+	   MsgBox % str
 	}
 }
+	called := new funcC
+	called1 := called.Bind("", "123")
 
-x := new a
-x.b()
-a.b()
+F1::
+	Menu, A, Add, aaaa, %called%
+	menu, A, show
+

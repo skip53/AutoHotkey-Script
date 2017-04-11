@@ -30,8 +30,10 @@ class _Menu {
 	Class _Item {
 		;实例变量
 		name :=				;显示的名称
-		called :=			;被call的函数或字符串
+		called :=			;exe路径字符串
+		calledObj :=		;call字符串转成的函数对象
 		parent :=			;父menu实例
+		
 		
 		;方法
 		__New(myParent) {
@@ -42,17 +44,28 @@ class _Menu {
 		transferCalled() {
 			if ( !IsFunc(called) && !IsLabel(called) )
 			{
-				funcCalled := new _Item.str2Func(called)
-				return funcCalled
+				this.calledObj := new this.str2Func(this)  					;存储函数对象到this.called   注意不能存储到没写this的called。为什么？？？？？？？？？？？？
+				;~ calledObj.Call("C:\Windows\System32\calc.exe")
 			}
-			else
-				return called
+			;~ return this.calledObj
 		}
 		
 		class str2Func {					;函数对象写法，具体参见https://autohotkey.com/docs/objects/Functor.htm
-			__Call(method, exePath) {		;注意函数对象，传参数的方法
-				Run, % exePath	
+			__New(myParent) {
+				this.parent := myParent
+				return this
 			}
+			Call() {		;注意函数对象，传参数的方法
+				;MsgBox % this.parent.called
+				Run, % this.parent.called
+			}
+			__Call(method, args*) {
+				if (method = "")  ;对%fn%()或fn.()
+					return this.Call(args*)
+				if (IsObject(method))  ; 如果此函数对象作为方法被使用.
+					return this.Call(method, args*)
+			}
+
 		}
 	}
 }
@@ -67,18 +80,22 @@ appStarter(chars, itemName, called) {
 	item.name := itemName
 	item.called := called
 	item.transferCalled()
-	MsgBox, % item.called
-	menu.child.Push(item)		;关联两个instance
+	menu.Push(item)		;关联两个instance
 	
 	;菜单里加上menuName和called的名字
 	;Menu, %menu.name%, Add, %item%.name, item.called
-	Menu, %chars%, Add, %itemName%, item.called
+	called := item.calledObj
+	Menu, %chars%, Add, %itemName%, %called%
+	;~ called.call()
 	
 	;创建热键，调用hotkeyTriger()函数
+	F1:: Menu, %chars%, show
 	;Hotkey, %chars%, menuName.hotkeyTriger()
 		
 }
 
 appStarter("F9", "test1", "C:\Windows\System32\calc.exe")
-appStarter("F9", "test2", "C:\Windows\System32\calc.exe")
+;appStarter("F9", "test2", "C:\Windows\System32\calc.exe")
 	
+hahaha:
+	return
