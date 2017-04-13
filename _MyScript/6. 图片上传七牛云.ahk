@@ -10,7 +10,7 @@
 #SingleInstance FORCE	;决定当脚本已经运行时是否允许它再次运行,记得用force，这样主脚本reload时，子脚本也自动reload了
 SetTitleMatchMode Regex	;更改进程匹配模式为正则
 #Persistent				;持续运行不退出
-#NoTrayIcon				;隐藏托盘图标
+;~ #NoTrayIcon				;隐藏托盘图标
 SendMode Input			;所有Send命令，统一采用最快的SendInput
 
 #Include d:\Dropbox\Technical_Backup\AHKScript\Functions\GDI+ standard library\Gdip_All 支持unicode u64等各种版本，最好用这个.ahk
@@ -37,8 +37,9 @@ saveImagetoFile(pathwithoutSlash, ext := "png", open := false) {
 	path := saveImagetoFile(path, "png")
 	
 	;上传
-	Run %comspec%  /c "Python d:\Dropbox\Technical_Backup\AHKScript\其它语言函数or库\图片上传七牛\upload_qiniu_clipborad.py %path%"
+	Run %comspec%  /c "Python d:\Dropbox\Technical_Backup\AHKScript\其它语言函数or库\图片上传七牛\upload_qiniu_clipborad.py %path%" /k
 	;Run, % "python ""d:\test test\upload_qiniu.py""" . A_Space . path     ;如果路径有空格，就这样写
+	;“/k” 表示命令执行完成之后，cmd窗口不消失，这样可以方便调试，如果出错了可以看到错误信息；如果希望窗口自动关闭，可以将这个参数设置为“/c”。
 	return
 
 #o::

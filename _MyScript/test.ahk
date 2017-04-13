@@ -35,15 +35,33 @@ SendMode Input			;所有Send命令，统一采用最快的SendInput
 
 
 
-class funcC {
-	Call(obj, str) {
-	   MsgBox % str
-	}
-}
-	called := new funcC
-	called1 := called.Bind("", "123")
+;~ class funcC {
+	;~ Call(obj, str) {
+	   ;~ MsgBox % str
+	;~ }
+;~ }
+	;~ called := new funcC
+	;~ called1 := called.Bind("", "123")
 
-F1::
-	Menu, A, Add, aaaa, %called%
-	menu, A, show
+;~ F1::
+	;~ Menu, A, Add, aaaa, %called%
+	;~ menu, A, show
 
+IME_GET(WinTitle="A")  {
+		ControlGet,hwnd,HWND,,,%WinTitle%
+		if  (WinActive(WinTitle))   {
+			ptrSize := !A_PtrSize ? 4 : A_PtrSize
+			VarSetCapacity(stGTI, cbSize:=4+4+(PtrSize*6)+16, 0)
+			NumPut(cbSize, stGTI,  0, "UInt")   ;   DWORD   cbSize;
+			hwnd := DllCall("GetGUIThreadInfo", Uint,0, Uint,&stGTI)
+					 ? NumGet(stGTI,8+PtrSize,"UInt") : hwnd
+		}
+		return DllCall("SendMessage"
+			, UInt, DllCall("imm32\ImmGetDefaultIMEWnd", Uint,hwnd)
+			, UInt, 0x0283  ;Message : WM_IME_CONTROL
+			,  Int, 0x0005  ;wParam  : IMC_GETOPENSTATUS
+			,  Int, 0)      ;lParam  : 0
+	}	
+	
+	
+f1::MsgBox % IME_GET()
