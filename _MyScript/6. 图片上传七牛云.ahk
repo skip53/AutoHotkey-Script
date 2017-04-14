@@ -37,7 +37,7 @@ saveImagetoFile(pathwithoutSlash, ext := "png", open := false) {
 	path := saveImagetoFile(path, "png")
 	
 	;上传
-	Run %comspec%  /c "Python d:\Dropbox\Technical_Backup\AHKScript\其它语言函数or库\图片上传七牛\upload_qiniu_clipborad.py %path%" /k
+	Run %A_ComSpec%  /c "Python d:\Dropbox\Technical_Backup\AHKScript\其它语言函数or库\图片上传七牛\upload_qiniu_clipborad.py %path%" /k
 	;Run, % "python ""d:\test test\upload_qiniu.py""" . A_Space . path     ;如果路径有空格，就这样写
 	;“/k” 表示命令执行完成之后，cmd窗口不消失，这样可以方便调试，如果出错了可以看到错误信息；如果希望窗口自动关闭，可以将这个参数设置为“/c”。
 	return
@@ -46,5 +46,5 @@ saveImagetoFile(pathwithoutSlash, ext := "png", open := false) {
 	Clipboard := 
 	send, ^c
 	clipwait
-	Run %comspec%  /c "d:\Dropbox\Technical_Backup\AHKScript\其它语言函数or库\图片上传七牛\upload_qiniu_path.py %Clipboard%" /p
+	Run %A_ComSpec%  /c "d:\Dropbox\Technical_Backup\AHKScript\其它语言函数or库\图片上传七牛\upload_qiniu_path.py %Clipboard%" /p
 	return

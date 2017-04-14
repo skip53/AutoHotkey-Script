@@ -1,4 +1,4 @@
-; WinHttpRequest.ahk
+﻿; WinHttpRequest.ahk
 ; 
 ; Usage is similar to HTTPRequest (by VxE),
 ; Please visit the HTTPRequest page (http://goo.gl/CcnNOY) for more details.
@@ -20,7 +20,7 @@
 ; 	2015-4-25 - Added option "Method: HEAD"
 ; 	2014-9-7  - Fixed a bug in "Charset:"
 ; 	2014-7-11 - Fixed a bug in "Charset:"
-WinHttpRequest( URL, ByRef In_POST__Out_Data="", ByRef In_Out_HEADERS="", Options="" )
+WinHttpRequest( URL, ByRef In_POST__Out_Data:="", ByRef In_Out_HEADERS:="", Options:="" )
 {
 	static nothing := ComObjError(0)
 	static oHTTP   := ComObjCreate("WinHttp.WinHttpRequest.5.1")

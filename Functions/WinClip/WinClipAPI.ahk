@@ -104,7 +104,7 @@ class WinClipAPI extends WinClip_base
     return 	strget(&msg,len)
   }
   IsInteger( var ) {
-    if var is integer
+    if (var is "integer")
       return True
     else 
       return False
@@ -183,11 +183,11 @@ class WinClipAPI extends WinClip_base
       DllCall("FreeLibrary", "Ptr", hModule)
     return 0
   }
-  StrSplit(str,delim,omit = "") {
+  StrSplit(str,delim,omit := "") {
     if (strlen(delim) > 1)
     {
-      StringReplace,str,str,% delim,ƒ,1 		;■¶╬
-      delim = ƒ
+      StrReplace, str, %str%, % delim, ƒ 		;■¶╬
+      delim := "ƒ"
     }
     ra := Array()
     loop, parse,str,% delim,% omit

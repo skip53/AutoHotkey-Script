@@ -1,4 +1,4 @@
-
+﻿
 ; AutoHotkey Version: AutoHotkey 1.1
 ; Language:           English
 ; Platform:           Win7 SP1 / Win8.1 / Win10
@@ -41,7 +41,7 @@ GetActiveBrowserURL() {
 
 GetBrowserURL_DDE(sClass) {
 	WinGet, sServer, ProcessName, % "ahk_class " sClass
-	StringTrimRight, sServer, sServer, 4
+	sServer := SubStr(sServer, 1, -1*(4))
 	iCodePage := A_IsUnicode ? 0x04B0 : 0x03EC ; 0x04B0 = CP_WINUNICODE, 0x03EC = CP_WINANSI
 	DllCall("DdeInitialize", "UPtrP", idInst, "Uint", 0, "Uint", 0, "Uint", 0)
 	hServer := DllCall("DdeCreateStringHandle", "UPtr", idInst, "Str", sServer, "int", iCodePage)
@@ -110,7 +110,7 @@ Acc_Init()
 	If Not h
 		h:=DllCall("LoadLibrary","Str","oleacc","Ptr")
 }
-Acc_ObjectFromWindow(hWnd, idObject = 0)
+Acc_ObjectFromWindow(hWnd, idObject := 0)
 {
 	Acc_Init()
 	If DllCall("oleacc\AccessibleObjectFromWindow", "Ptr", hWnd, "UInt", idObject&=0xFFFFFFFF, "Ptr", -VarSetCapacity(IID,16)+NumPut(idObject==0xFFFFFFF0?0x46000000000000C0:0x719B3800AA000C81,NumPut(idObject==0xFFFFFFF0?0x0000000000020400:0x11CF3C3D618736E0,IID,"Int64"),"Int64"), "Ptr*", pacc)=0

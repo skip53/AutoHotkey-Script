@@ -1,31 +1,31 @@
+ï»¿;-------------------------------------------------------------------------------
+;~ è½¯ä»¶å¿«é€Ÿå¯åŠ¨å™¨
 ;-------------------------------------------------------------------------------
-;~ Èí¼ş¿ìËÙÆô¶¯Æ÷
-;-------------------------------------------------------------------------------
-#SingleInstance FORCE	;¾ö¶¨µ±½Å±¾ÒÑ¾­ÔËĞĞÊ±ÊÇ·ñÔÊĞíËüÔÙ´ÎÔËĞĞ,¼ÇµÃÓÃforce£¬ÕâÑùÖ÷½Å±¾reloadÊ±£¬×Ó½Å±¾Ò²×Ô¶¯reloadÁË
-SetTitleMatchMode Regex	;¸ü¸Ä½ø³ÌÆ¥ÅäÄ£Ê½ÎªÕıÔò
-#Persistent				;³ÖĞøÔËĞĞ²»ÍË³ö
-;~ #NoTrayIcon				;Òş²ØÍĞÅÌÍ¼±ê
-SendMode Input			;ËùÓĞSendÃüÁî£¬Í³Ò»²ÉÓÃ×î¿ìµÄSendInput
+#SingleInstance FORCE	;å†³å®šå½“è„šæœ¬å·²ç»è¿è¡Œæ—¶æ˜¯å¦å…è®¸å®ƒå†æ¬¡è¿è¡Œ,è®°å¾—ç”¨forceï¼Œè¿™æ ·ä¸»è„šæœ¬reloadæ—¶ï¼Œå­è„šæœ¬ä¹Ÿè‡ªåŠ¨reloadäº†
+SetTitleMatchMode Regex	;æ›´æ”¹è¿›ç¨‹åŒ¹é…æ¨¡å¼ä¸ºæ­£åˆ™
+#Persistent				;æŒç»­è¿è¡Œä¸é€€å‡º
+;~ #NoTrayIcon				;éšè—æ‰˜ç›˜å›¾æ ‡
+SendMode Input			;æ‰€æœ‰Sendå‘½ä»¤ï¼Œç»Ÿä¸€é‡‡ç”¨æœ€å¿«çš„SendInput
 
-#Include d:\Dropbox\Technical_Backup\AHKScript\Functions\Menu - some functions related to AHK menus  ¹ØÓÚmenu²Ëµ¥µÄ¿â\Menu.ahk
+#Include d:\Dropbox\Technical_Backup\AHKScript\Functions\Menu - some functions related to AHK menus  å…³äºmenuèœå•çš„åº“\Menu.ahk
 
 class _Menu {
 	static wholeMenuList := {}
-	nameIndex :=			;ÔÚwholeMenuListÖĞµÄkey     _Menu.wholeMenuList[nameIndex]¼´ÊÇmenuÊµÀıµÄ¶ÔÏóÒıÓÃ
-	child := []				;×ÓitemµÄÒıÓÃÊı×é
+	nameIndex :=			;åœ¨wholeMenuListä¸­çš„key     _Menu.wholeMenuList[nameIndex]å³æ˜¯menuå®ä¾‹çš„å¯¹è±¡å¼•ç”¨
+	child := []				;å­itemçš„å¼•ç”¨æ•°ç»„
 	
-	;ÊµÀı±äÁ¿
+	;å®ä¾‹å˜é‡
 	
-	;·½·¨
+	;æ–¹æ³•
 	__New(chars) {		
-		_Menu.wholeMenuList[chars] := this			;todo ²»ÓÃÊı×éÁË£¬Ö±½Ó´æ´¢½ø¶ÔÏó£¿
+		_Menu.wholeMenuList[chars] := this			;todo ä¸ç”¨æ•°ç»„äº†ï¼Œç›´æ¥å­˜å‚¨è¿›å¯¹è±¡ï¼Ÿ
 		this.nameIndex := chars
 	}
 	
-	;¼ì²é²Ëµ¥ÊÇ·ñ´æÔÚ£¬·ñÔòĞÂ½¨
-	checkMenuExist(chars) {							;º¯Êı²»Ì«Çø·Ö Ààº¯Êı »¹ÊÇ ÊµÀıº¯Êı£¬¶¼ÄÜÓÃ
+	;æ£€æŸ¥èœå•æ˜¯å¦å­˜åœ¨ï¼Œå¦åˆ™æ–°å»º
+	checkMenuExist(chars) {							;å‡½æ•°ä¸å¤ªåŒºåˆ† ç±»å‡½æ•° è¿˜æ˜¯ å®ä¾‹å‡½æ•°ï¼Œéƒ½èƒ½ç”¨
 		if ( _Menu.wholeMenuList[chars] != "" )
-			return _Menu.wholeMenuList[chars]		;·µ»ØµÄÊÇmenuÊµÀı¶ÔÏó
+			return _Menu.wholeMenuList[chars]		;è¿”å›çš„æ˜¯menuå®ä¾‹å¯¹è±¡
 		else
 		{
 			newMenu := new _Menu(chars)
@@ -33,20 +33,20 @@ class _Menu {
 		}
 	}
 	
-	;·µ»Øº¯Êı¶ÔÏó£¬ĞĞÎªÊÇµ¯³ömenu
+	;è¿”å›å‡½æ•°å¯¹è±¡ï¼Œè¡Œä¸ºæ˜¯å¼¹å‡ºmenu
 	afterPressHotkey() {
 		return new this.popOutMenu(this)
 	}
 	
 	Class _Item {
-		;ÊµÀı±äÁ¿
-		name :=				;ÏÔÊ¾µÄÃû³Æ
-		called :=			;exeÂ·¾¶×Ö·û´®
-		calledObj :=		;call×Ö·û´®×ª³ÉµÄº¯Êı¶ÔÏó
-		parent :=			;¸¸menuÊµÀı
+		;å®ä¾‹å˜é‡
+		name :=				;æ˜¾ç¤ºçš„åç§°
+		called :=			;exeè·¯å¾„å­—ç¬¦ä¸²
+		calledObj :=		;callå­—ç¬¦ä¸²è½¬æˆçš„å‡½æ•°å¯¹è±¡
+		parent :=			;çˆ¶menuå®ä¾‹
 		
 		
-		;·½·¨
+		;æ–¹æ³•
 		__New(myParent) {
 			this.parent := myParent
 			return this
@@ -55,25 +55,25 @@ class _Menu {
 		transferCalled() {
 			if ( !IsFunc(called) && !IsLabel(called) )
 			{
-				this.calledObj := new this.str2Func(this)  					;´æ´¢º¯Êı¶ÔÏóµ½this.called   ×¢Òâ²»ÄÜ´æ´¢µ½Ã»Ğ´thisµÄcalled¡£ÎªÊ²Ã´£¿£¿£¿£¿£¿£¿£¿£¿£¿£¿£¿£¿
+				this.calledObj := new this.str2Func(this)  					;å­˜å‚¨å‡½æ•°å¯¹è±¡åˆ°this.called   æ³¨æ„ä¸èƒ½å­˜å‚¨åˆ°æ²¡å†™thisçš„calledã€‚ä¸ºä»€ä¹ˆï¼Ÿï¼Ÿï¼Ÿï¼Ÿï¼Ÿï¼Ÿï¼Ÿï¼Ÿï¼Ÿï¼Ÿï¼Ÿï¼Ÿ
 				;~ calledObj.Call("C:\Windows\System32\calc.exe")
 			}
 			;~ return this.calledObj
 		}
 		
-		class str2Func {					;º¯Êı¶ÔÏóĞ´·¨£¬¾ßÌå²Î¼ûhttps://autohotkey.com/docs/objects/Functor.htm
+		class str2Func {					;å‡½æ•°å¯¹è±¡å†™æ³•ï¼Œå…·ä½“å‚è§https://autohotkey.com/docs/objects/Functor.htm
 			__New(myParent) {
 				this.parent := myParent
 				return this
 			}
-			Call() {		;×¢Òâº¯Êı¶ÔÏó£¬´«²ÎÊıµÄ·½·¨
+			Call() {		;æ³¨æ„å‡½æ•°å¯¹è±¡ï¼Œä¼ å‚æ•°çš„æ–¹æ³•
 				;MsgBox % this.parent.called
 				Run, % this.parent.called
 			}
 			__Call(method, args*) {
-				if (method = "")  ;¶Ô%fn%()»òfn.()
+				if (method = "")  ;å¯¹%fn%()æˆ–fn.()
 					return this.Call(args*)
-				if (IsObject(method))  ; Èç¹û´Ëº¯Êı¶ÔÏó×÷Îª·½·¨±»Ê¹ÓÃ.
+				if (IsObject(method))  ; å¦‚æœæ­¤å‡½æ•°å¯¹è±¡ä½œä¸ºæ–¹æ³•è¢«ä½¿ç”¨.
 					return this.Call(method, args*)
 			}
 
@@ -94,12 +94,12 @@ class _Menu {
 			;~ Menu, %menuName%, Show, 127, Center
 		}
 		__Call(method, args*) {
-			if (method = "")  ;¶Ô%fn%()»òfn.()
+			if (method = "")  ;å¯¹%fn%()æˆ–fn.()
 				return this.Call(args*)
-			if (IsObject(method))  ; Èç¹û´Ëº¯Êı¶ÔÏó×÷Îª·½·¨±»Ê¹ÓÃ.
+			if (IsObject(method))  ; å¦‚æœæ­¤å‡½æ•°å¯¹è±¡ä½œä¸ºæ–¹æ³•è¢«ä½¿ç”¨.
 				return this.Call(method, args*)
 		}
-		setMenuPosition() {					;Éè¶¨menuÏÔÊ¾µÄÎ»ÖÃ£¬´æ´¢ÔÚthis.x  this.yÖĞ
+		setMenuPosition() {					;è®¾å®šmenuæ˜¾ç¤ºçš„ä½ç½®ï¼Œå­˜å‚¨åœ¨this.x  this.yä¸­
 			this.x := (A_ScreenWidth / 2)
 			this.y := (A_ScreenHeight / 2)
 		}
@@ -107,26 +107,26 @@ class _Menu {
 	}
 }
 
-;calledÖ§³Öµ¥¸ö³ÌĞò¡¢¶à¸ö³ÌĞò¡¢º¯Êı
+;calledæ”¯æŒå•ä¸ªç¨‹åºã€å¤šä¸ªç¨‹åºã€å‡½æ•°
 appStarter(chars, itemName, called) {
-	;¼ì²émenuÊµÀıÊÇ·ñ´æÔÚ¡£ÈôÎŞ£¬Ôò´´½¨£¬ÈçÓĞ£¬Ôò¶ÁÈ¡´æ´¢µØÖ·¡£·µ»Ømenu instance
+	;æ£€æŸ¥menuå®ä¾‹æ˜¯å¦å­˜åœ¨ã€‚è‹¥æ— ï¼Œåˆ™åˆ›å»ºï¼Œå¦‚æœ‰ï¼Œåˆ™è¯»å–å­˜å‚¨åœ°å€ã€‚è¿”å›menu instance
 	menu := _Menu.checkMenuExist(chars)
 	
-	;´´½¨calledº¯Êı£¬ÓĞÔòÖ±½ÓÌí¼Ó£¬ÎŞÔòĞÂ½¨
+	;åˆ›å»ºcalledå‡½æ•°ï¼Œæœ‰åˆ™ç›´æ¥æ·»åŠ ï¼Œæ— åˆ™æ–°å»º
 	item := new menu._Item(menu)
 	item.name := itemName
 	item.called := called
 	item.transferCalled()
-	menu.Push(item)		;¹ØÁªÁ½¸öinstance
+	menu.Push(item)		;å…³è”ä¸¤ä¸ªinstance
 	
-	;²Ëµ¥Àï¼ÓÉÏmenuNameºÍcalledµÄÃû×Ö
+	;èœå•é‡ŒåŠ ä¸ŠmenuNameå’Œcalledçš„åå­—
 	;Menu, %menu.name%, Add, %item%.name, item.called
 	called := item.calledObj
 	Menu, %chars%, Add, %itemName%, %called%
 	;~ called.call()
 	
 	popoutMenu := menu.afterPressHotkey()
-	;´´½¨ÈÈ¼ü£¬µ÷ÓÃafterPressHotkey()º¯Êı
+	;åˆ›å»ºçƒ­é”®ï¼Œè°ƒç”¨afterPressHotkey()å‡½æ•°
 	Hotkey, %chars%, %popoutMenu%, On
 
 }
