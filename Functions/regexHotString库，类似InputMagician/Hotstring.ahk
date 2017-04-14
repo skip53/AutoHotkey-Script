@@ -1,4 +1,4 @@
-﻿/*
+/*
 Hotstring(
 	trigger:
 		A string or a regular expression to trigger the hotstring. (If you use a regex here, the mode should be 3 for the regex to work)
@@ -59,7 +59,7 @@ Hotstring(trigger, label, mode := 1, clearTrigger := 1, cond := ""){
 		if (StrLen(Hotkey) == 2 && Substr(Hotkey,1,1) == "+" && Instr(keys.alpha, Substr(Hotkey, 2,1))){
 			Hotkey := Substr(Hotkey,2)
 			if (!GetKeyState("Capslock", "T")){
-				StrUpper, Hotkey, %Hotkey%
+				StringUpper, Hotkey,Hotkey
 			}
 		}
 		
@@ -67,7 +67,7 @@ Hotstring(trigger, label, mode := 1, clearTrigger := 1, cond := ""){
 		uppercase :=  GetKeyState("Capslock", "T") ? !shiftState : shiftState 
 		;If capslock is down, shift's function is reversed.(ie pressing shift and a key while capslock is on will provide the lowercase key)
 		if (uppercase && Instr(keys.alpha, Hotkey)){
-			StrUpper, Hotkey, %Hotkey%
+			StringUpper, Hotkey,Hotkey
 		}
 		if (Instr("," . keys.breakKeys . ",", "," . Hotkey . ",")){
 			typed := ""
@@ -77,7 +77,7 @@ Hotstring(trigger, label, mode := 1, clearTrigger := 1, cond := ""){
 			typed .= effect[Hotkey]
 		} else if (Hotkey == "BS"){
 			; trim typed var if Backspace was pressed.
-			typed := SubStr(typed, 1, -1*(1))
+			StringTrimRight,typed,typed,1
 			return
 		} else if (RegExMatch(Hotkey, "Numpad(.+?)", numKey)) {
 			if (numkey1 ~= "\d"){
@@ -136,7 +136,7 @@ Hotstring(trigger, label, mode := 1, clearTrigger := 1, cond := ""){
 				
 					;Working out the backreferences
 					Loop, % local$.Count()
-						StrReplace, toSend, %toSend%, % "$" . A_Index, % local$.Value(A_index)
+						StringReplace, toSend,toSend,% "$" . A_Index,% local$.Value(A_index),All
 					toSend := RegExReplace(toSend,"([!#\+\^\{\}])","{$1}") ;Escape modifiers
 					SendInput,%toSend%
 				}
@@ -146,7 +146,7 @@ Hotstring(trigger, label, mode := 1, clearTrigger := 1, cond := ""){
 		if (matched){
 			typed := ""
 		} else if (StrLen(typed) > 350){
-			typed := SubStr(typed, (200)+1)
+			StringTrimLeft,typed,typed,200
 		}
 	} else {
 		if (hotstrings.HasKey(trigger) && label == ""){

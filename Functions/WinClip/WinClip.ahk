@@ -291,7 +291,7 @@
     ObjSetCapacity( this, "allData", 0 )
   }
   
-  Copy( timeout := 1, method := 1 )
+  Copy( timeout = 1, method = 1 )
   {
     this.Snap( data )
     this.Clear()    ;clearing the clipboard
@@ -305,7 +305,7 @@
     return !ret
   }
   
-  iCopy( timeout := 1, method := 1 )
+  iCopy( timeout = 1, method = 1 )
   {
     this._IsInstance( A_ThisFunc )
     this.Snap( data )
@@ -325,7 +325,7 @@
     return bytesCopied
   }
   
-  Paste( plainText := "", method := 1 )
+  Paste( plainText = "", method = 1 )
   {
     ret := 0
     if ( plainText != "" )
@@ -348,7 +348,7 @@
     return ret
   }
   
-  iPaste( method := 1 )
+  iPaste( method = 1 )
   {
     this._IsInstance( A_ThisFunc )
     this.Snap( data )
@@ -378,12 +378,12 @@
     return !WinClipAPI.CountClipboardFormats()
   }
   
-  _waitClipReady( timeout := 10000 )
+  _waitClipReady( timeout = 10000 )
   {
     start_time := A_TickCount
-    Sleep, 100
+    sleep 100
     while ( WinClipAPI.GetOpenClipboardWindow() && ( A_TickCount - start_time < timeout ) )
-      Sleep, 100
+      sleep 100
   }
 
   iSetText( textData )
@@ -480,7 +480,7 @@
     return this._toclipboard( clipData, clipSize )
   }
 
-  SetHTML( html, source := "" )
+  SetHTML( html, source = "" )
   {
     if ( html = "" )
       return 0
@@ -490,7 +490,7 @@
     return this._toclipboard( clipData, clipSize )
   }
 
-  iSetHTML( html, source := "" )
+  iSetHTML( html, source = "" )
   {
     if ( html = "" )
       return 0
@@ -520,7 +520,7 @@
     EndHTML := this._calcHTMLLen( StartHTML + htmlLen + 76 )
     StartFragment := this._calcHTMLLen( StartHTML + 38 )
     EndFragment := this._calcHTMLLen( StartFragment + htmlLen )
-    html := "
+    html =
     ( Join`r`n
 Version:0.9
 StartHTML:%StartHTML%
@@ -535,7 +535,7 @@ SourceURL:%source%
 <!--EndFragment-->
 </body>
 </html>
-    )"
+    )
     sLen := StrPut( html, encoding )
     ObjSetCapacity( objFormats[ uFmt ], "buffer", sLen )
     StrPut( html, ObjGetAddress( objFormats[ uFmt ], "buffer" ), sLen, encoding )
@@ -543,7 +543,7 @@ SourceURL:%source%
     return this._compileClipData( clipData, objFormats )
   }
   
-  _appendText( ByRef clipData, clipSize, textData, IsSet := 0 )
+  _appendText( ByRef clipData, clipSize, textData, IsSet = 0 )
   {
     objFormats := this._parseClipboardData( clipData, clipSize )
     uFmt := this.ClipboardFormats.CF_UNICODETEXT
@@ -574,7 +574,7 @@ SourceURL:%source%
     return list
   }
   
-  _setFiles( ByRef clipData, clipSize, files, append := 0, isCut := 0 )
+  _setFiles( ByRef clipData, clipSize, files, append = 0, isCut = 0 )
   {
     objFormats := this._parseClipboardData( clipData, clipSize )
     uFmt := this.ClipboardFormats.CF_HDROP
@@ -607,7 +607,7 @@ SourceURL:%source%
     return this._compileClipData( clipData, objFormats )
   }
   
-  SetFiles( files, isCut := 0 )
+  SetFiles( files, isCut = 0 )
   {
     if ( files = "" )
       return 0
@@ -617,7 +617,7 @@ SourceURL:%source%
     return this._toclipboard( clipData, clipSize )
   }
   
-  iSetFiles( files, isCut := 0 )
+  iSetFiles( files, isCut = 0 )
   {
     this._IsInstance( A_ThisFunc )
     if ( files = "" )
@@ -628,7 +628,7 @@ SourceURL:%source%
     return this._setClipData( clipData, clipSize )
   }
   
-  AppendFiles( files, isCut := 0 )
+  AppendFiles( files, isCut = 0 )
   {
     if ( files = "" )
       return 0
@@ -638,7 +638,7 @@ SourceURL:%source%
     return this._toclipboard( clipData, clipSize )
   }
   
-  iAppendFiles( files, isCut := 0 )
+  iAppendFiles( files, isCut = 0 )
   {
     this._IsInstance( A_ThisFunc )
     if ( files = "" )
@@ -749,7 +749,7 @@ SourceURL:%source%
     DllCall( "RealizePalette", "ptr", hdc )
     size := DllCall( "GetObject", "Ptr", hBitmap, "Uint", 0, "ptr", 0 )
     VarSetCapacity( bm, size, 0 )
-    DllCall( "GetObject", "ptr", hBitmap, "Uint", size, "ptr", &bm )
+    DllCall( "GetObject", "Ptr", hBitmap, "Uint", size, "ptr", &bm )
     biBitCount := NumGet( bm, 16, "UShort" )*NumGet( bm, 18, "UShort" )
     nColors := (1 << biBitCount)
 	if ( nColors > 256 ) 

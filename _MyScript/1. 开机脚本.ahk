@@ -1,6 +1,6 @@
 ﻿;提升性能相关的配置
-; REMOVED: #NoEnv						;不检查空变量是否为环境变量
-; REMOVED: SetBatchLines, -1			;行之间运行不留时间空隙,默认是有10ms的间隔
+#NoEnv						;不检查空变量是否为环境变量
+SetBatchLines, -1			;行之间运行不留时间空隙,默认是有10ms的间隔
 SetKeyDelay, -1, -1			;发送按键不留时间空隙
 SetMouseDelay, -1			;每次鼠标移动或点击后自动的延时=0   
 SetDefaultMouseSpeed, 0		;设置在 Click 和 MouseMove/Click/Drag 中没有指定鼠标速度时使用的速度 = 瞬间移动.

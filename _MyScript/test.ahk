@@ -47,61 +47,21 @@ SendMode Input			;所有Send命令，统一采用最快的SendInput
 	;~ Menu, A, Add, aaaa, %called%
 	;~ menu, A, show
 
-GetProcessMemory_Private(ProcName, Units:="K") {
-		Process, Exist, %ProcName%
-		pid := Errorlevel
-		MsgBox, % pid
-
-		; get process handle
-		hProcess := DllCall( "OpenProcess", UInt, 0x10|0x400, Int, false, UInt, pid )
-
-		; get memory info
-		PROCESS_MEMORY_COUNTERS_EX := VarSetCapacity(memCounters, 44, 0)
-		DllCall( "psapi.dll\GetProcessMemoryInfo", UInt, hProcess, UInt, &memCounters, UInt, PROCESS_MEMORY_COUNTERS_EX )
-		DllCall( "CloseHandle", UInt, hProcess )
-
-		SetFormat, Float, 0.0 ; round up K
-
-		PrivateBytes := NumGet(memCounters, 40, "UInt")
-		if (Units == "B")
-			return PrivateBytes
-		if (Units == "K")
-			Return PrivateBytes / 1024
-		if (Units == "M")
-			Return PrivateBytes / 1024 / 1024
-	}
-	
-	GetProcessMemory_All(ProcName) {
-		Process, Exist, %ProcName%
-		pid := Errorlevel
-
-		; get process handle
-		hProcess := DllCall( "OpenProcess", UInt, 0x10|0x400, Int, false, UInt, pid )
-
-		; get memory info
-		PROCESS_MEMORY_COUNTERS_EX := VarSetCapacity(memCounters, 44, 0)
-		DllCall( "psapi.dll\GetProcessMemoryInfo", UInt, hProcess, UInt, &memCounters, UInt, PROCESS_MEMORY_COUNTERS_EX )
-		DllCall( "CloseHandle", UInt, hProcess )
-
-		list := "cb,PageFaultCount,PeakWorkingSetSize,WorkingSetSize,QuotaPeakPagedPoolUsage"
-			  . ",QuotaPagedPoolUsage,QuotaPeakNonPagedPoolUsage,QuotaNonPagedPoolUsage"
-			  . ",PagefileUsage,PeakPagefileUsage,PrivateUsage"
-
-		n := 0
-		Loop, Parse, list, `,
-		{
-			n += 4
-; REMOVED: 			SetFormat, Float, 0.0 ; round up K
-			this := A_Loopfield
-			this := NumGet( memCounters, (A_Index = 1 ? 0 : n-4), "UInt") / 1024
-
-			; omit cb
-			if (A_Index != 1)
-				info .= A_Loopfield . ": " . this . " K" . ( A_Loopfield != "" ? "`n" : "" )
+IME_GET(WinTitle="A")  {
+		ControlGet,hwnd,HWND,,,%WinTitle%
+		if  (WinActive(WinTitle))   {
+			ptrSize := !A_PtrSize ? 4 : A_PtrSize
+			VarSetCapacity(stGTI, cbSize:=4+4+(PtrSize*6)+16, 0)
+			NumPut(cbSize, stGTI,  0, "UInt")   ;   DWORD   cbSize;
+			hwnd := DllCall("GetGUIThreadInfo", Uint,0, Uint,&stGTI)
+					 ? NumGet(stGTI,8+PtrSize,"UInt") : hwnd
 		}
-
-		Return "[" . pid . "] " . pname . "`n`n" . info ; for everything
-	}
+		return DllCall("SendMessage"
+			, UInt, DllCall("imm32\ImmGetDefaultIMEWnd", Uint,hwnd)
+			, UInt, 0x0283  ;Message : WM_IME_CONTROL
+			,  Int, 0x0005  ;wParam  : IMC_GETOPENSTATUS
+			,  Int, 0)      ;lParam  : 0
+	}	
 	
 	
-MsgBox % GetProcessMemory_All("firefox.exe")
+f1::MsgBox % IME_GET()

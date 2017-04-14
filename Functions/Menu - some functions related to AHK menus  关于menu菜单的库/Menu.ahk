@@ -1,4 +1,4 @@
-﻿; ======================================================================================================================
+; ======================================================================================================================
 ; Namespace:      Menu
 ; Function:       Some functions related to AHK menus.
 ; Tested with:    AHK 1.1.14.03
@@ -216,7 +216,7 @@ Menu_RemoveCheckMarks(HMENU, ApplyToSubMenus := True) {
    DllCall("User32.dll\GetMenuInfo", "Ptr", HMENU, "Ptr", &MI, "UInt")
    If (ApplyToSubMenus)
       NumPut(0x80000010, MI, 4, "UInt") ; MIM_APPLYTOSUBMENUS = 0x80000000 | MIM_STYLE = 0x00000010
-   NumPut(NumGet(MI, 8, "UInt") | 0x80000000, MI, 8, "UInt") ; MNS_NOCHECK = 0x80000000
+   NumPut(NumGet(MI, 8, "UINT") | 0x80000000, MI, 8, "UInt") ; MNS_NOCHECK = 0x80000000
    DllCall("User32.dll\SetMenuInfo", "Ptr", HMENU, "Ptr", &MI, "UInt")
    Return True
 }
