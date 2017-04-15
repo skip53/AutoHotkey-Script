@@ -1,74 +1,87 @@
 ;-------------------------------------------------------------------------------
-;~ 软件快速启动器
+;~ 软件快速启动器a
 ;-------------------------------------------------------------------------------
 #SingleInstance FORCE	;决定当脚本已经运行时是否允许它再次运行,记得用force，这样主脚本reload时，子脚本也自动reload了
 SetTitleMatchMode Regex	;更改进程匹配模式为正则
 #Persistent				;持续运行不退出
-;~ #NoTrayIcon				;隐藏托盘图标
+#NoTrayIcon				;隐藏托盘图标
 SendMode Input			;所有Send命令，统一采用最快的SendInput
 
 #Include d:\Dropbox\Technical_Backup\AHKScript\Functions\Menu - some functions related to AHK menus  关于menu菜单的库\Menu.ahk
 
-class _Menu {
-	static wholeMenuList := {}
-	nameIndex :=			;在wholeMenuList中的key     _Menu.wholeMenuList[nameIndex]即是menu实例的对象引用
-	child := []				;子item的引用数组
+class MenuClass {
+	static wholeMenuList := {}		;里面存储的是对象，不是字符串
+	indexOfWholeMenuList :=	
 	
-	;实例变量
-	
-	;方法
-	__New(chars) {		
-		_Menu.wholeMenuList[chars] := this			;todo 不用数组了，直接存储进对象？
-		this.nameIndex := chars
+	__New(hotkeyOfMenu) {		
+		MenuClass.wholeMenuList[hotkeyOfMenu] := this
+		this.indexOfWholeMenuList := hotkeyOfMenu
 	}
 	
-	;检查菜单是否存在，否则新建
-	checkMenuExist(chars) {							;函数不太区分 类函数 还是 实例函数，都能用
-		if ( _Menu.wholeMenuList[chars] != "" )
-			return _Menu.wholeMenuList[chars]		;返回的是menu实例对象
+	checkMenuExist(hotkeyAndNameOfMenu) {				;函数不太区分 类函数 还是 实例函数，都能用
+		if ( MenuClass.wholeMenuList[hotkeyAndNameOfMenu] != "" )
+			return MenuClass.wholeMenuList[hotkeyAndNameOfMenu]
 		else
 		{
-			newMenu := new _Menu(chars)
+			newMenu := new MenuClass(hotkeyAndNameOfMenu)
 			return newMenu
 		}
 	}
 	
-	;返回函数对象，行为是弹出menu
-	afterPressHotkey() {
-		return new this.popOutMenu(this)
+	afterPressHotkeyDoWhat() {
+		return new this.popOutMenuORRunSoloDirectly(this)
 	}
 	
-	Class _Item {
-		;实例变量
-		name :=				;显示的名称
-		called :=			;exe路径字符串
-		calledObj :=		;call字符串转成的函数对象
-		parent :=			;父menu实例
+	Class ItemClass {
+		whatItemNameShows :=
+		calledBeforeConvert :=	
+		calledFuncORLabelString :=	
+		parent :=	
 		
-		
-		;方法
 		__New(myParent) {
 			this.parent := myParent
 			return this
 		}
 		
-		transferCalled() {
-			if ( !IsFunc(called) && !IsLabel(called) )
+		convertCalled() {
+			if ( IsFunc(this.calledBeforeConvert) )
 			{
-				this.calledObj := new this.str2Func(this)  					;存储函数对象到this.called   注意不能存储到没写this的called。为什么？？？？？？？？？？？？
-				;~ calledObj.Call("C:\Windows\System32\calc.exe")
+				this.calledFuncORLabelString := Func(this.calledBeforeConvert)
 			}
-			;~ return this.calledObj
+			else if ( IsLabel(this.calledBeforeConvert) ) 
+			{
+				this.calledFuncORLabelString := this.calledBeforeConvert
+			}
+			else
+			{
+				this.calledFuncORLabelString := new this.FuncClassConvertFromString(this)  			;不能存储到没写this的called。为什么？？？？？？？？？？？？
+			}
+			return this.calledFuncORLabelString
 		}
 		
-		class str2Func {					;函数对象写法，具体参见https://autohotkey.com/docs/objects/Functor.htm
+		generateItemNameIfNotGiven() {
+			if ( this.whatItemNameShows != "" )
+				return this.whatItemNameShows
+			else
+			{
+				;~ MsgBox, % this.calledBeforeConvert
+				;~ tempArray := StrSplit(this.calledBeforeConvert, "\", A_Space)
+				;~ tempMaxIndex := tempArray.MaxIndex()
+				;~ this.whatItemNameShows := Array[tempMaxIndex]
+				;~ MsgBox, % Array[tempMaxIndex]
+				filename := RegExReplace(this.calledBeforeConvert, ".*?\\?([^\\]+)$", "$1")
+				;MsgBox, % filename
+				return filename
+			}
+		}
+		
+		class FuncClassConvertFromString {
 			__New(myParent) {
 				this.parent := myParent
 				return this
 			}
-			Call() {		;注意函数对象，传参数的方法
-				;MsgBox % this.parent.called
-				Run, % this.parent.called
+			Call() {
+				Run, % this.parent.calledBeforeConvert
 			}
 			__Call(method, args*) {
 				if (method = "")  ;对%fn%()或fn.()
@@ -80,26 +93,37 @@ class _Menu {
 		}
 	}
 
-	Class popOutMenu {
+	Class popOutMenuORRunSoloDirectly {
 		__New(myParent) {
 			this.parent := myParent
 		}
 		Call() {
-			menuName := this.parent.nameIndex
-			CoordMode, Menu, Screen
-			this.setMenuPosition()
-			x := this.x
-			y := this.y
-			Menu, %menuName%, Show, %x%, %y%
-			;~ Menu, %menuName%, Show, 127, Center
+			if ( this.parent.Length() = 1 )					;不能写作.Length，这是一个方法，不是属性
+			{	if ( IsLabel(this.parent[1].calledBeforeConvert) )
+				{
+					destination := this.parent[1].calledFuncORLabelString
+					gosub %destination%
+				}
+				else
+					this.parent[1].calledFuncORLabelString.call()
+			}
+			else		;menu里有多个item
+			{
+				menuName := this.parent.indexOfWholeMenuList
+				CoordMode, Menu, Screen
+				this.setMenuPosition()
+				x := this.x
+				y := this.y
+				Menu, %menuName%, Show, %x%, %y%
+			}
 		}
 		__Call(method, args*) {
-			if (method = "")  ;对%fn%()或fn.()
+			if (method = "")  								;对%fn%()或fn.()
 				return this.Call(args*)
-			if (IsObject(method))  ; 如果此函数对象作为方法被使用.
+			if (IsObject(method))  							;如果此函数对象作为方法被使用.
 				return this.Call(method, args*)
 		}
-		setMenuPosition() {					;设定menu显示的位置，存储在this.x  this.y中
+		setMenuPosition() {									;设定menu显示的位置，存储在this.x  this.y中
 			this.x := (A_ScreenWidth / 2)
 			this.y := (A_ScreenHeight / 2)
 		}
@@ -107,30 +131,58 @@ class _Menu {
 	}
 }
 
-;called支持单个程序、多个程序、函数
-appStarter(chars, itemName, called) {
-	;检查menu实例是否存在。若无，则创建，如有，则读取存储地址。返回menu instance
-	menu := _Menu.checkMenuExist(chars)
+;calledString只支持接受字符串，可以是单程序路径、函数名、标签名
+appStarter(hotkeys, calledString, itemName := "") {
+	menu := MenuClass.checkMenuExist(hotkeys)			;检查menu实例是否存在。若无，则创建，如有，则读取存储地址。返回menu instance
 	
-	;创建called函数，有则直接添加，无则新建
-	item := new menu._Item(menu)
-	item.name := itemName
-	item.called := called
-	item.transferCalled()
-	menu.Push(item)		;关联两个instance
+	itemInstance := new menu.ItemClass(menu)
+	itemInstance.whatItemNameShows := itemName
+	itemInstance.calledBeforeConvert := calledString
+	calledOBJorSTR := itemInstance.convertCalled()
+	itemName := itemInstance.generateItemNameIfNotGiven()
+	menu.Push(itemInstance)
 	
-	;菜单里加上menuName和called的名字
-	;Menu, %menu.name%, Add, %item%.name, item.called
-	called := item.calledObj
-	Menu, %chars%, Add, %itemName%, %called%
-	;~ called.call()
+	Menu, %hotkeys%, Add, %itemName%, %calledOBJorSTR%
 	
-	popoutMenu := menu.afterPressHotkey()
-	;创建热键，调用afterPressHotkey()函数
-	Hotkey, %chars%, %popoutMenu%, On
-
+	popOutMenuORRunSoloDirectly := menu.afterPressHotkeyDoWhat()		;创建热键，调用afterPressHotkeyDoWhat()函数
+	Hotkey, %hotkeys%, %popOutMenuORRunSoloDirectly%, On
 }
 
-appStarter("Numpad0 & q", "test2test2test2test2test2test2test2test2test2test2", "C:\Windows\System32\cmd.exe")
-appStarter("Numpad0 & q", "test1", "C:\Windows\System32\calc.exe")
-appStarter("^+z", "test2", "C:\Windows\System32\cmd.exe")
+appStarter("#c", "cmd")
+appStarter("!#c", "cmd")
+appStarter("#f", "d:\TechnicalSupport\ProgramFiles\Firefox-pcxFirefox\firefox\firefox.exe")
+appStarter("#g", "D:\TechnicalSupport\ProgramFiles\CentBrowser\chrome.exe")
+appStarter("#n", "notepad")
+appStarter("#z", "d:\TechnicalSupport\ProgramFiles\AutoHotkey\SciTE\SciTE.exe")
+appStarter("#e", "D:\TechnicalSupport\ProgramFiles\Evernote\Evernote\Evernote.exe")
+appStarter(">!m", "D:\TechnicalSupport\Sandbox\LL\1LongAndTrust\drive\D\TechnicalSupport\Users\LL\AppData\Roaming\Spotify\Spotify.exe")
+appStarter("#y", "D:\Dropbox\Technical_Backup\ProgramFiles.Untrust\YodaoDict\YodaoDict.exe")
+appStarter("#s", "整理pdg")
+appStarter("#t", "启动TotalCommander")
+appStarter("#h", "shell:::{ED7BA470-8E54-465E-825C-99712043E01C}", "回收站")
+appStarter("#g", "录制gif")
+appStarter("#s", "d:\BaiduYun\Technical_Backup\ProgramFiles\ColorPic 4.1  屏幕取色小插件 颜色 色彩 配色\#ColorPic.exe")
+
+return
+
+整理pdg:
+	Run, "d:\Dropbox\Technical_Backup\ProgramFiles.Trust\#Book Tools\Sx_Renamer\Sx_Renamer.exe"
+	Run, "d:\Dropbox\Technical_Backup\ProgramFiles.Trust\#Book Tools\Pdg2Pic\Pdg2Pic.exe"
+	return
+启动TotalCommander:
+	if WinExist("ahk_class TTOTAL_CMD") {
+		WinClose
+	}
+	WinWaitClose, ahk_class TTOTAL_CMD, , 2
+	Sleep, 500
+	Run, "d:\TechnicalSupport\ProgramFiles\Total Commander 8.51a\TOTALCMD.EXE"
+	WinWait, ahk_class TNASTYNAGSCREEN				;自动点123
+	WinGetText, Content, ahk_class TNASTYNAGSCREEN	;获取未注册提示窗口文本信息
+	StringMid, Num, Content, 10, 1					;获取随机数字
+	ControlSend,, %Num%, ahk_class TNASTYNAGSCREEN	;将随机数字发送到未注册提示窗口
+	WinActivate, ahk_class TTOTAL_CMD
+	return
+录制gif:
+	Run "D:\Dropbox\Technical_Backup\ProgramFiles.Untrust\keycastow 显示击键按键，录制屏幕时很有用\keycastow.exe"
+	Run "d:\Dropbox\Technical_Backup\ProgramFiles.Untrust\#Repository\ScreenToGif 1.4.1 屏幕录制gif\$$ScreenToGif 2.5.exe"
+	return

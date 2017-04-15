@@ -10,7 +10,7 @@
 #SingleInstance FORCE	;决定当脚本已经运行时是否允许它再次运行,记得用force，这样主脚本reload时，子脚本也自动reload了
 SetTitleMatchMode Regex	;更改进程匹配模式为正则
 #Persistent				;持续运行不退出
-;~ #NoTrayIcon				;隐藏托盘图标
+#NoTrayIcon				;隐藏托盘图标
 SendMode Input			;所有Send命令，统一采用最快的SendInput
 
 #Include d:\Dropbox\Technical_Backup\AHKScript\Functions\GDI+ standard library\Gdip_All 支持unicode u64等各种版本，最好用这个.ahk
