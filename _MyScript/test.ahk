@@ -2,4 +2,5 @@
 SetTitleMatchMode Regex	;更改进程匹配模式为正则
 SendMode Input			;所有Send命令，统一采用最快的SendInput
 
-::ahk::AutoHotkey
+
+

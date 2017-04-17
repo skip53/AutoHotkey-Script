@@ -46,5 +46,5 @@ saveImagetoFile(pathwithoutSlash, ext := "png", open := false) {
 	Clipboard := 
 	send, ^c
 	clipwait
-	Run %comspec%  /k "Python d:\Dropbox\Technical_Backup\AHKScript\其它语言函数or库\图片上传七牛\upload_qiniu.py %Clipboard%" /p
+	Run %comspec%  /c "Python d:\Dropbox\Technical_Backup\AHKScript\其它语言函数or库\图片上传七牛\upload_qiniu.py %Clipboard%" /p
 	return
