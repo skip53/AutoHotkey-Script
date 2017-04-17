@@ -7,9 +7,9 @@
 
 
 ```
-├─_MyScript					主脚本
-├─Archive					回收站
-├─Functions					函数、库
+├─_MyScript			主脚本
+├─Archive			回收站
+├─Functions			函数、库
 ├─其它语言函数or库
 ├─收集的独立运行脚本
 └─辅助工具
@@ -35,19 +35,17 @@
 
 Python 脚本修改自：[将图片上传到七牛云存储并直接返回markdown可用的图片链接](https://github.com/mjnhmd/markdown-upload-qiniu)
 
-### 3. 自动保存文件.ahk
+### 3. 快速启动器.ahk
+
+说明参见[appStarter() 快速启动器](https://github.com/waldens/AutoHotkey-Script/tree/master/Functions/appStarter%20%E5%BF%AB%E9%80%9F%E5%90%AF%E5%8A%A8%E5%99%A8)
+
+### 4. 自动保存文件.ahk
 
 编辑U盘内的PDF等文件时，如果忘记保存，而拔下U盘，会导致之前添加的批注等意外丢失。该脚本对指定程序，启用自动保存。
 
-### 4. 结束垃圾进程.ahk
+### 5. 结束垃圾进程.ahk
 
 某些常驻的垃圾进程：如搜狗输入法的`SogouCloud.exe`、Spotify的`SpotifyWebHelper.exe`等，自动结束进程。
-
-
-
-
-
-
 
 
 
