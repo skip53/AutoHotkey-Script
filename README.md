@@ -37,7 +37,7 @@ Python 脚本修改自：[将图片上传到七牛云存储并直接返回markdown可用的图片链接](http
 
 ### 3. 快速启动器.ahk
 
-说明参见[appStarter() 快速启动器](https://github.com/waldens/AutoHotkey-Script/tree/master/Functions/appStarter%20%E5%BF%AB%E9%80%9F%E5%90%AF%E5%8A%A8%E5%99%A8)
+说明参见：[appStarter() 快速启动器](https://github.com/waldens/AutoHotkey-Script/tree/master/Functions/appStarter%20%E5%BF%AB%E9%80%9F%E5%90%AF%E5%8A%A8%E5%99%A8)
 
 ### 4. 自动保存文件.ahk
 

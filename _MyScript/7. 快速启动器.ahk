@@ -23,7 +23,7 @@ appStarter("#t", "启动TotalCommander")
 appStarter("#k", "shell:::{ED7BA470-8E54-465E-825C-99712043E01C}", "控制面板任务")
 appStarter("#h", "shell:::{645FF040-5081-101B-9F08-00AA002F954E}", "回收站")
 appStarter("#g", "录制gif")
-appStarter("#s", "d:\BaiduYun\Technical_Backup\ProgramFiles\ColorPic 4.1  屏幕取色小插件 颜色 色彩 配色\#ColorPic.exe")
+appStarter("#s", "d:\Dropbox\Technical_Backup\ProgramFiles.Untrust\ColorPic 4.1  屏幕取色小插件 颜色 色彩 配色\#ColorPic.exe")
 appStarter("#j", "D:\Dropbox\Technical_Backup\ProgramFiles.Untrust\HourglassPortable 倒计时小工具 计时器 时钟\HourglassPortable 计时器 倒计时.exe")
 
 return

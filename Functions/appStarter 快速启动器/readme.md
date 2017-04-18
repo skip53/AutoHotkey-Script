@@ -28,13 +28,13 @@ appStarter("#f", "d:\ProgramFiles\firefox\firefox.exe")
 appStarter("#h", "shell:::{645FF040-5081-101B-9F08-00AA002F954E}", "回收站")
 
 ;标签
-appStarter("#g", "录制gif")
+appStarter("$RButton up", "录制gif")
 录制gif:
 	;your code
 	return
 
 ;函数
-appStarter("#g", "batchPdg")
+appStarter("Numpad0 & b", "batchPdg")
 batchPdg() {
      ;your code
 }
@@ -44,7 +44,8 @@ batchPdg() {
 
 ## Todo
 
-解放鼠标：菜单弹出后，按下1 2 3…快捷启动第一、二、三项…或者，像Ditto那样，再多按一下就往下移动一项
+1. 解放鼠标：菜单弹出后，按下1 2 3…快捷启动第一、二、三项…或者，像Ditto一样，再多按一下，就往下移动一项
+2. calledString是函数时，支持参数传递
 
 ## 地址
 
