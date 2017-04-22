@@ -25,6 +25,7 @@ appStarter("#h", "shell:::{645FF040-5081-101B-9F08-00AA002F954E}", "回收站")
 appStarter("#g", "录制gif")
 appStarter("#s", "d:\Dropbox\Technical_Backup\ProgramFiles.Untrust\ColorPic 4.1  屏幕取色小插件 颜色 色彩 配色\#ColorPic.exe")
 appStarter("#j", "D:\Dropbox\Technical_Backup\ProgramFiles.Untrust\HourglassPortable 倒计时小工具 计时器 时钟\HourglassPortable 计时器 倒计时.exe")
+appStarter("#u", "D:\Dropbox\Technical_Backup\ProgramFiles.Trust\UltraEdit v22.20.0.49(x32)\ultraedit.lnk")
 
 return
 

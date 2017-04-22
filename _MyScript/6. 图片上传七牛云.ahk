@@ -31,7 +31,7 @@ saveImagetoFile(pathwithoutSlash, ext := "png", open := false) {
 	return FilePath
 }
 
-#u::
+!u::
 	;保存剪贴板图片 -> 临时文件
 	path := A_Temp "\" A_Now
 	path := saveImagetoFile(path, "png")
@@ -42,7 +42,7 @@ saveImagetoFile(pathwithoutSlash, ext := "png", open := false) {
 	;“/k” 表示命令执行完成之后，cmd窗口不消失，这样可以方便调试，如果出错了可以看到错误信息；如果希望窗口自动关闭，可以将这个参数设置为“/c”。
 	return
 
-#o::
+!o::
 	Clipboard := 
 	send, ^c
 	clipwait
