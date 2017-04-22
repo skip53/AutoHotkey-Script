@@ -1,5 +1,9 @@
-﻿#NoEnv
+﻿;-------------------------------------------------------------------------------
+;~ 软件快速启动器a
+;-------------------------------------------------------------------------------
+#NoEnv
 #SingleInstance force
+#NoTrayIcon				;隐藏托盘图标
 SetWorkingDir, %A_ScriptDir%
 SetBatchLines, -1
 CoordMode, Mouse, Screen
@@ -24,6 +28,35 @@ LossFocus_CloseGui := True
 
 ; 高亮鼠标下的图片(如果比较卡，可以禁用此选项)
 HighlightImage := True
+
+; 图片对应的图床地址
+global imageAddrInOnline := {  "小黄脸开心-1": "https://ooo.0o0.ooo/2017/04/16/58f32b46f2b08.png"
+    ,"小黄脸开心-2": "https://ooo.0o0.ooo/2017/04/16/58f32b46f2957.png"
+    ,"小黄脸酷": "https://ooo.0o0.ooo/2017/04/16/58f32b470aa74.png"
+    ,"小黄脸哭": "https://ooo.0o0.ooo/2017/04/16/58f32b470cd46.png"
+    ,"小黄脸迷茫": "https://ooo.0o0.ooo/2017/04/16/58f32b4719aac.png"
+    ,"小黄脸懵B": "https://ooo.0o0.ooo/2017/04/16/58f32b471b38e.png"
+    ,"小黄脸酷-1": "https://ooo.0o0.ooo/2017/04/16/58f32b471b7a7.png"
+    ,"小黄脸热恋": "https://ooo.0o0.ooo/2017/04/16/58f32b4724eae.png"
+    ,"小黄脸亲吻-2": "https://ooo.0o0.ooo/2017/04/16/58f32b47258fd.png"
+    ,"小黄脸思考": "https://ooo.0o0.ooo/2017/04/16/58f32b5d9f8cc.png"
+    ,"小黄脸天使": "https://ooo.0o0.ooo/2017/04/16/58f32b5da1f24.png"
+    ,"小黄脸头晕": "https://ooo.0o0.ooo/2017/04/16/58f32b5dacdc0.png"
+    ,"小黄脸吐舌": "https://ooo.0o0.ooo/2017/04/16/58f32b5daf873.png"
+    ,"小黄脸笑哭": "https://ooo.0o0.ooo/2017/04/16/58f32b5db27b9.png"
+    ,"小黄脸微笑-1": "https://ooo.0o0.ooo/2017/04/16/58f32b5db5020.png"
+    ,"小黄脸眼红": "https://ooo.0o0.ooo/2017/04/16/58f32b5dbc891.png"
+    ,"file_86877": "https://ooo.0o0.ooo/2017/04/22/58fb7bf7c3ede.png"
+    ,"file_86878": "https://ooo.0o0.ooo/2017/04/22/58fb7bf7d5c71.png"
+    ,"file_86879": "https://ooo.0o0.ooo/2017/04/22/58fb7bf7dcd53.png"
+    ,"file_86881": "https://ooo.0o0.ooo/2017/04/22/58fb7bf7e862b.png"
+    ,"file_86882": "https://ooo.0o0.ooo/2017/04/22/58fb7bf7f4237.png"
+    ,"file_86883": "https://ooo.0o0.ooo/2017/04/22/58fb7bf80b806.png"
+    ,"file_86884": "https://ooo.0o0.ooo/2017/04/22/58fb7bf80dd4c.png"
+    ,"file_86885": "https://ooo.0o0.ooo/2017/04/22/58fb7bf81c895.png"
+    ,"file_86886": "https://ooo.0o0.ooo/2017/04/22/58fb7bf82670c.png"
+    ,"file_86887": "https://ooo.0o0.ooo/2017/04/22/58fb7bf83497f.png"
+    ,"file_86888": "https://ooo.0o0.ooo/2017/04/22/58fb7c01d05ef.png"    }
 
 ; —————————————————————— /设置 ——————————————————————
 
@@ -257,12 +290,14 @@ ComObjConnect(WB, WB_events)
 ; 分类
 Gui, Add, Tab2, xm w505 h25 Buttons AltSubmit -Wrap -Background BackgroundFFFFFF vTabNumber gChangeCategory, %CategoryList%
 
-Gui, Show,, %gui_title%
+;Gui, Show,, %gui_title%
 
 if LossFocus_CloseGui
     SetTimer, CloseGui, 200
 
 TrayTip, %gui_title%, 按 Ctrl+1 显示界面`n   Esc 关闭界面
+Sleep, 1000
+TrayTip
 
 WinGetPos, x, y, w, h
 Return
@@ -374,11 +409,27 @@ class WB_events
 
         Clipboard_bak := ClipboardAll       ; 备份剪贴板
         Clipboard :=
+        img_id := RegExReplace(url, "^.*\\([^>]+)\.[^.]+>$", "$1")   ;获取文件名 同时也是html内的id
         
-        MsgBox, % url
-        ; 复制图片到剪贴板
-        img_id := RegExReplace(url, "^.*\\([^>]+)\.[^.]+>$", "$1")
-        __CopyImg(img_id)
+        ;MsgBox, % url
+        ShiftIsDown := GetKeyState("Shift", "P")        ;insert markdown
+        CtrlIsDown := GetKeyState("Ctrl", "P")          ;insert bbcode
+        AltIsDown := GetKeyState("Alt", "P")            ;insert html
+        
+        if ( ShiftIsDown )
+        {
+            Clipboard := "![](" . imageAddrInOnline[img_id] . ")"
+        } else if ( CtrlIsDown )
+        {
+            Clipboard := "[img]" . imageAddrInOnline[img_id] . "[/img]"
+        } else if ( AltIsDown )
+        {
+            Clipboard := "<img src=""" . imageAddrInOnline[img_id] . """>" 
+        } else
+        {
+            __CopyImg(img_id)               ; 复制图片文件到剪贴板
+        }
+        
         ClipWait, 5
 
         SendInput, ^v                       ; 粘贴
@@ -393,5 +444,5 @@ class WB_events
 __CopyImg(img_id)
 {
     global
-    WB.document.parentWindow.execScript("Javascript:copyImage('" img_id "')")
+    WB.document.parentWindow.execScript("Javascript:copyImage('" img_id "')")   ;本质上是通过JS，把该img_id对应的图片，复制进剪贴板，相比于GDip胜在能处理gif动图
 }
