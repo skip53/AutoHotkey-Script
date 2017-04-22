@@ -29,7 +29,7 @@
 * [[HELP] Enhance Evernote editor by using WinClip](https://autohotkey.com/boards/viewtopic.php?f=5&t=7231)
 * [请教一个 关于 Evernote 行距的 AutoHotkey 问题](https://www.v2ex.com/t/225853)
 
-![evernote.ahk效果图](http://ww1.sinaimg.cn/large/88e10423gw1erqo6ymzahg20ar08lteh.gif)
+![](http://ww1.sinaimg.cn/large/88e10423gw1erqo6ymzahg20ar08lteh.gif)
 
 ### 2. 图片 _一键_ 上传七牛云.ahk
 
