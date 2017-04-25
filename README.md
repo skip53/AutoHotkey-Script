@@ -23,7 +23,7 @@
 
 印象笔记的编辑器太简单。该脚本利用HTML代码构造样式，再借助剪贴板，直接把带格式的文字段，粘贴回印象笔记内，扩展其编辑功能。
 
-相关代码没有独立出来，在`自定义快捷操作.ahk`的约 L725 行。
+具体说明，参见：
 
 相关讨论：
 * [[HELP] Enhance Evernote editor by using WinClip](https://autohotkey.com/boards/viewtopic.php?f=5&t=7231)

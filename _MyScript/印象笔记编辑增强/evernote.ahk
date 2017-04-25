@@ -8,9 +8,9 @@
 	SetControlDelay, 0
 	SendMode Input
 
-	#Include %A_LineFile%\..\..\Functions\WinClip\WinClipAPI.ahk
-	#Include %A_LineFile%\..\..\Functions\WinClip\WinClip.ahk
-	#Include %A_LineFile%\..\..\辅助工具\快捷抓取、查找屏幕文字／图像字符串\函数部分 v5.6.ahk
+	#Include %A_LineFile%\..\..\..\Functions\WinClip\WinClipAPI.ahk
+	#Include %A_LineFile%\..\..\..\Functions\WinClip\WinClip.ahk
+	#Include %A_LineFile%\..\..\..\辅助工具\快捷抓取、查找屏幕文字／图像字符串\函数部分 v5.6.ahk
 
 	#InstallKeybdHook		;安装键盘和鼠标钩子 像Input和A_PriorKey，都需要钩子
 	#InstallMouseHook
@@ -19,6 +19,11 @@
 	#Persistent				;持续运行不退出
 	#MaxThreadsPerHotkey 5
 
+  Menu, tray, tip, 印象笔记-编辑增强
+	TrayTip, 提示, 印象笔记-编辑增强, , 1
+	Sleep, 1000
+	TrayTip
+  
 	;evernote编辑器增强函数
 	evernoteEdit(eFoward, eEnd)
 	{
