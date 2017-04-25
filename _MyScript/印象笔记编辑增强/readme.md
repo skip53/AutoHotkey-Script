@@ -10,7 +10,7 @@
 |<kbd>Alt</kbd>+<kbd>F</kbd>        |  方(F)框环绕、代码块| ![](http://onuia4d7l.bkt.clouddn.com/2017_04_25_1234.gif)|
 |<kbd>Alt</kbd>+<kbd>S</kbd>       |   超(Super)级标题 | ![](http://onuia4d7l.bkt.clouddn.com/2017_04_25_6666.gif)
 |<kbd>Alt</kbd>+<kbd>Y</kbd>      |   引(Y)用 | ![](http://onuia4d7l.bkt.clouddn.com/2017_04_25_7777.gif)
-|<kbd>Alt</kbd>-1/2/3/4  | 字体 红/蓝/灰/绿 色 | ![](http://onuia4d7l.bkt.clouddn.com/2017_04_25_999.gif)
+|<kbd>Alt</kbd>-<kbd>1</kbd>/<kbd>2</kbd>/<kbd>3</kbd>/<kbd>4<kbd>  | 字体 红/蓝/灰/绿 色 | ![](http://onuia4d7l.bkt.clouddn.com/2017_04_25_999.gif)
 
 ## 原理
 
