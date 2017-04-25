@@ -1,15 +1,4 @@
 ﻿{
-#NoEnv						;不检查空变量是否为环境变量
-#KeyHistory 0				;不记录击键log
-ListLines Off				;不记录击键log
-SetBatchLines, -1			;行之间运行不留时间空隙,默认是有10ms的间隔
-SetKeyDelay, -1, -1			;发送按键不留时间空隙
-SetMouseDelay, -1			;每次鼠标移动或点击后自动的延时=0   
-SetDefaultMouseSpeed, 0		;设置在 Click 和 MouseMove/Click/Drag 中没有指定鼠标速度时使用的速度 = 瞬间移动.
-SetWinDelay, 0
-SetControlDelay, 0
-SendMode Input				;据说SendInput is the fastest send method.
-
 	#NoEnv						;不检查空变量是否为环境变量
 	SetBatchLines, -1			;行之间运行不留时间空隙,默认是有10ms的间隔
 	SetKeyDelay, -1, -1			;发送按键不留时间空隙
@@ -17,15 +6,11 @@ SendMode Input				;据说SendInput is the fastest send method.
 	SetDefaultMouseSpeed, 0		;设置在 Click 和 MouseMove/Click/Drag 中没有指定鼠标速度时使用的速度 = 瞬间移动.
 	SetWinDelay, 0
 	SetControlDelay, 0
-	SendMode Input				;据说SendInput is the fastest send method.
-	;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+	SendMode Input
 
 	#Include %A_LineFile%\..\..\Functions\WinClip\WinClipAPI.ahk
 	#Include %A_LineFile%\..\..\Functions\WinClip\WinClip.ahk
-	;#Include %A_LineFile%\..\..\Functions\url_encode_decode.ahk	;该脚本必须以ANSI运行
-	#Include %A_LineFile%\..\..\Functions\TrayIcon by FanaticGuru.ahk
-	#Include %A_LineFile%\..\..\Functions\WinHttpRequest 网络函数 HTTP get post\WinHttpRequest.ahk
-	#Include %A_LineFile%\..\..\Functions\GetActiveBrowserURL 获取浏览器窗口的地址 等信息\GetActiveBrowserURL.ahk
+	#Include %A_LineFile%\..\..\辅助工具\快捷抓取、查找屏幕文字／图像字符串\函数部分 v5.6.ahk
 
 	#InstallKeybdHook		;安装键盘和鼠标钩子 像Input和A_PriorKey，都需要钩子
 	#InstallMouseHook
@@ -33,34 +18,19 @@ SendMode Input				;据说SendInput is the fastest send method.
 	#SingleInstance ignore	;决定当脚本已经运行时是否允许它再次运行。
 	#Persistent				;持续运行不退出
 	#MaxThreadsPerHotkey 5
-	CoordMode, Mouse, Client	;鼠标坐标采用Client模式
-	
-	
-	
 
-;evernote编辑器增强函数
+	;evernote编辑器增强函数
 	evernoteEdit(eFoward, eEnd)
 	{
-		;BlockInput On
 		clipboard =
 		Send ^c
 		ClipWait, 1
 		t := WinClip.GetHtml3()
-		;MsgBox, % t
-		;t := WinClip.GetText()
-		;RegExMatch(t, "s)(?<=StartFragment-->)(.*?)(?=<!--EndFragment)", t)
-		;MsgBox, % WinClip.GetHtml2()
-		;MsgBox, % WinClip.GetHtml3()
 		html = %eFoward%%t%%eEnd%
-		;MsgBox, % html
 		WinClip.Clear()
-		;MsgBox, % html
 		WinClip.SetHTML(html)
 		Sleep, 300
-		;SendInput, {Space}{backspace}
-		;Sleep,2000
 		Send ^v
-		;BlockInput Off
 		Return
 	}
 	
@@ -114,27 +84,11 @@ SendMode Input				;据说SendInput is the fastest send method.
 }
 
 #IfWinActive ahk_class (ENSingleNoteView|ENMainFrame)
-{
+{		
 	;快捷键: 非编辑器部分
 	{
 		^Space::controlsend, , ^{Space}, A   	;简化格式
-		
-		;双击右键高亮
-		{
-			$RButton::
-				CountStp := ++CountStp
-				SetTimer, TimerPrtSc, 500
-				Return
-			TimerPrtSc:
-				if CountStp > 1 ;大于1时关闭计时器
-					SetTimer, TimerPrtSc, Off
-				if CountStp = 1 ;只按一次时执行
-					SendInput, {RButton}
-				if CountStp = 2 ;按两次时...
-					SendInput, ^+h
-				CountStp := 0 ;最后把记录的变量设置为0,于下次记录.
-				Return
-		}
+		F1::
 	}
 	
 	;颜色 字体格式等
@@ -148,30 +102,32 @@ SendMode Input				;据说SendInput is the fastest send method.
 		
 		;v6版本，鼠标点击方式，实现修改文字颜色
 		evernoteMouseChangeColor(r, g, b) {
-			CoordMode, Mouse, Screen	;鼠标坐标，临时采用全屏幕模式，否则鼠标不能回归原位
+			CoordMode, Mouse, Screen	;鼠标坐标全屏幕模式，方便鼠标回归原位
 			MouseGetPos, xpos, ypos 
-			CoordMode, Mouse, Client	;鼠标坐标，返回Client模式
-			IfWinActive, ahk_class ENMainFrame 
+			文字:=""
+			文字.="|<>52.0000300000000200000000401zzU007k03tw000V0073U002400840008k0000000R0008"
+			if 查找文字(929,181,150000,150000,文字,"*147",X,Y,OCR,0.2,0.2)
 			{
-				Click 890, 159		;点击颜色按钮
-				Click 935, 341		;点击更多颜色
-				;严重依赖窗口视图相对位置，编辑区域中界限，设定为表格刚刚消失不见时的位置，接近于屏幕竖直中线
+				CoordMode, Mouse
+				Click, %X%, %Y%		;点击颜色按钮
+				Y1 := Y + 180
+				Click, %X%, %Y1%	;点击更多颜色
 			}
-			IfWinActive, ahk_class ENSingleNoteView
+			else
 			{
-				Click 231, 121		;点击颜色按钮
-				Click 262, 304		;点击更多颜色
+				MsgBox, 没有找到颜色选择框,找字模块失败!
 			}
 			;SendL("M")			;进入更多颜色		
-			Sleep, 50
+			WinWait, 颜色
+			WinMove, 10, 10
+			CoordMode, Mouse, Client	;鼠标坐标Client模式
 			Click, 116, 333		;进入自定义颜色
 			SendInput, {Tab}{Tab}{Tab}
 			SendInput %r%{Tab}%g%{Tab}%b%{Tab}{Space}
 			Click, 21, 259		;点击设定好自定义颜色
 			SendInput, {Tab}{Space}
-			CoordMode, Mouse, Screen	;鼠标坐标，继续改回全屏幕模式，方便移动鼠标
+			CoordMode, Mouse, Screen	;鼠标坐标全屏幕模式
 			MouseMove, %xpos%, %ypos%, 0
-			CoordMode, Mouse, Client	;鼠标坐标，继续返回Client模式
 			return
 		}
 		
