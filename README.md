@@ -23,7 +23,7 @@
 
 印象笔记的编辑器太简单。该脚本利用HTML代码构造样式，再借助剪贴板，直接把带格式的文字段，粘贴回印象笔记内，扩展其编辑功能。
 
-具体说明，参见：
+具体说明，参见：[印象笔记-编辑增强](https://github.com/waldens/AutoHotkey-Script/tree/master/_MyScript/%E5%8D%B0%E8%B1%A1%E7%AC%94%E8%AE%B0%E7%BC%96%E8%BE%91%E5%A2%9E%E5%BC%BA)
 
 相关讨论：
 * [[HELP] Enhance Evernote editor by using WinClip](https://autohotkey.com/boards/viewtopic.php?f=5&t=7231)
