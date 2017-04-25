@@ -308,7 +308,7 @@ Return
 ;        显示界面快捷键
 ; #################################
 ;
-^1::
+#1::
 MouseGetPos, x, y, winID
 y := (y + h > A_ScreenHeight) ? (y - h) : y
 x := (x + w > A_ScreenWidth) ? (x - w) : x
