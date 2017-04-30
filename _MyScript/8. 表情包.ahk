@@ -308,7 +308,7 @@ Return
 ;        显示界面快捷键
 ; #################################
 ;
-#1::
+!b::
 MouseGetPos, x, y, winID
 y := (y + h > A_ScreenHeight) ? (y - h) : y
 x := (x + w > A_ScreenWidth) ? (x - w) : x
@@ -413,7 +413,7 @@ class WB_events
         
         ;MsgBox, % url
         ShiftIsDown := GetKeyState("Shift", "P")        ;insert markdown
-        CtrlIsDown := GetKeyState("Ctrl", "P")          ;insert bbcode
+        CtrlIsDown := GetKeyState("Ctrl", "P")          ;insert file
         AltIsDown := GetKeyState("Alt", "P")            ;insert html
         
         if ( ShiftIsDown )
@@ -421,13 +421,13 @@ class WB_events
             Clipboard := "![](" . imageAddrInOnline[img_id] . ")"
         } else if ( CtrlIsDown )
         {
-            Clipboard := "[img]" . imageAddrInOnline[img_id] . "[/img]"
+            __CopyImg(img_id)               ; 复制图片文件到剪贴板
         } else if ( AltIsDown )
         {
             Clipboard := "<img src=""" . imageAddrInOnline[img_id] . """>" 
         } else
         {
-            __CopyImg(img_id)               ; 复制图片文件到剪贴板
+            Clipboard := "[img]" . imageAddrInOnline[img_id] . "[/img]"
         }
         
         ClipWait, 5
