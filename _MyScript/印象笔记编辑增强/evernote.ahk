@@ -93,7 +93,19 @@
 	;快捷键: 非编辑器部分
 	{
 		^Space::controlsend, , ^{Space}, A   	;简化格式
-		F1::
+		$RButton::		;双击右键高亮
+		{
+			CountStp := ++CountStp
+			SetTimer, TimerPrtSc, -500
+			Return
+			TimerPrtSc:
+				if CountStp = 1 ;只按一次时执行
+					SendInput, {RButton}
+				if CountStp = 2 ;按两次时...
+					SendInput, ^+h
+				CountStp := 0 ;最后把记录的变量设置为0,于下次记录.
+				Return
+		}
 	}
 	
 	;颜色 字体格式等
