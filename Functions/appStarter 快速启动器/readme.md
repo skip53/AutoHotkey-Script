@@ -51,3 +51,6 @@ batchPdg() {
 
 [GitHub](https://github.com/waldens/AutoHotkey-Script/tree/master/Functions/appStarter%20%E5%BF%AB%E9%80%9F%E5%90%AF%E5%8A%A8%E5%99%A8)
 
+## 鼓励
+
+如果这个仓库对你有用，请慷慨点击 _★Star_。你的支持将鼓励我继续分享！

@@ -1,5 +1,7 @@
 ﻿;-------------------------------------------------------------------------------
-;~ 软件快速启动器a
+;~ 表情包。增加新表情步骤：
+;~ 1. 把图片放在“表情”目录下，新文件夹 就是 新分类
+;~ 2. 上传图片，把地址按对应格式，写在imageAddrInOnline里（注意key不包括扩展名！）
 ;-------------------------------------------------------------------------------
 #NoEnv
 #SingleInstance force
@@ -56,7 +58,15 @@ global imageAddrInOnline := {  "小黄脸开心-1": "https://ooo.0o0.ooo/2017/04
     ,"file_86885": "https://ooo.0o0.ooo/2017/04/22/58fb7bf81c895.png"
     ,"file_86886": "https://ooo.0o0.ooo/2017/04/22/58fb7bf82670c.png"
     ,"file_86887": "https://ooo.0o0.ooo/2017/04/22/58fb7bf83497f.png"
-    ,"file_86888": "https://ooo.0o0.ooo/2017/04/22/58fb7c01d05ef.png"    }
+    ,"file_86888": "https://ooo.0o0.ooo/2017/04/22/58fb7c01d05ef.png"
+    ,"01_cla_27": "https://ooo.0o0.ooo/2017/05/01/590699e241b60.jpg"
+    ,"01_cla_62": "https://ooo.0o0.ooo/2017/05/01/590699e24e959.gif"
+    ,"01_cla_61": "https://ooo.0o0.ooo/2017/05/01/590699e24fa64.gif"
+    ,"02_fav_01_3_闪": "https://ooo.0o0.ooo/2017/05/01/590699e25cc93.gif"
+    ,"02_fav_05": "https://ooo.0o0.ooo/2017/05/01/590699e263b29.gif"
+    ,"02_fav_04": "https://ooo.0o0.ooo/2017/05/01/590699e26418a.gif"
+    ,"02_fav_06": "https://ooo.0o0.ooo/2017/05/01/590699e27f7ca.gif"
+    ,"02_fav_09": "https://ooo.0o0.ooo/2017/05/01/590699e296c42.gif"    }
 
 ; —————————————————————— /设置 ——————————————————————
 
@@ -411,7 +421,7 @@ class WB_events
         Clipboard :=
         img_id := RegExReplace(url, "^.*\\([^>]+)\.[^.]+>$", "$1")   ;获取文件名 同时也是html内的id
         
-        ;MsgBox, % url
+        ;~ MsgBox, % img_id
         ShiftIsDown := GetKeyState("Shift", "P")        ;insert markdown
         CtrlIsDown := GetKeyState("Ctrl", "P")          ;insert file
         AltIsDown := GetKeyState("Alt", "P")            ;insert html
@@ -429,7 +439,7 @@ class WB_events
         {
             Clipboard := "[img]" . imageAddrInOnline[img_id] . "[/img]"
         }
-        
+        ;~ MsgBox, % Clipboard
         ClipWait, 5
 
         SendInput, ^v                       ; 粘贴
