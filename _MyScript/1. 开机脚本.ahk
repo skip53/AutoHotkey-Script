@@ -18,7 +18,7 @@ SendMode Input				;据说SendInput is the fastest send method.
 	Run, "D:\TechnicalSupport\ProgramFiles\MyLifeOrganized.net\MLO\mlo.exe"
 	;~ Run, "D:\TechnicalSupport\ProgramFiles\Sandboxie\Start.exe" /box:1LongAndTrust "d:\Dropbox\Technical_Backup\ProgramFiles.Trust\douban\firefox\firefox.exe"
 	Run % "d:\Dropbox\Technical_Backup\ProgramFiles.Trust\RecycleBinHelper 自动删除回收站N天前的文件\RecycleBinHelper.exe 7 -s"    ;删除7天前的文件
-	
+	Run, "C:\localdns\localdns.cmd"                     ;代码里用的绝对路径，所以不能修改路径
 }
 
 ;-------------------------------------------------------------------------------
@@ -47,9 +47,17 @@ SendMode Input				;据说SendInput is the fastest send method.
 	packbackup("d:\Storage\Software\CentBrowser Backup", "Chrome&CentBrowser_Backup_30days.zip", "d:\TechnicalSupport\ProgramFiles\CentBrowser\User Data\", "25")
 	packbackup("d:\Storage\Software\Totalcmd Backup", "Total Commander newest backup.zip", "d:\TechnicalSupport\ProgramFiles\Total Commander 8.51a\", "30")
 	packbackup("d:\Dropbox\Technical_Backup", "Sandboxie.ini.zip", "D:\TechnicalSupport\ProgramFiles\Sandboxie\Sandboxie.ini", 7, false)
+	packbackup("d:\Dropbox\Technical_Backup", "hosts.zip", "C:\Windows\System32\drivers\etc\hosts", 2, false)
 	;备份操作不要间隔太小，如每次开机备份，这样坏配置可能会覆盖先前备份，导致真要恢复时也找不到有价值备份了
 }
 
+;-------------------------------------------------------------------------------
+;~ 开机自启 - 延时
+;-------------------------------------------------------------------------------
+{
+	Sleep, 120000
+	Run, "C:\localdns\localdns-update.cmd"		;更新localdns配置  因为dns要先跑起来，才能更新
+}
 ExitApp
 
 

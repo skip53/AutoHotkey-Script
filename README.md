@@ -40,9 +40,13 @@ Python 脚本修改自：[将图片上传到七牛云存储并直接返回markdown可用的图片链接](http
 
 ### 3. 表情包.ahk
 
-在QQ、网页、论坛等地方，快速插入收藏的表情：
+在QQ、网页、论坛、Github等地方，插入自定义收藏的表情：
 * 按下<kbd>Alt</kbd>-<kbd>B</kbd>后，弹出类似QQ的表情选择框，如下图
 * 支持以Markdown、BBCode、HTML格式插入
+  * 单纯点击表情，插入BBCode格式
+  * 按住Shift点击表情，插入Markdown格式
+  * 按住Alt点击，插入HTML格式
+  * 按住Ctrl点击，在富文本位置插入图片，例如QQ、Telegram对话框
 * 支持表情分组（下图只有一个“最爱”分组）
 
 ![](http://onuia4d7l.bkt.clouddn.com/2017_04_23_20170423002936.png)
