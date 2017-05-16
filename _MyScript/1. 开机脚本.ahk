@@ -32,16 +32,22 @@ SendMode Input				;据说SendInput is the fastest send method.
 		7zdir := "d:\Dropbox\Technical_Backup\ProgramFiles.Trust\7z1604-extra  7zip的单独命令行版本\7za.exe"
 		SetWorkingDir, %backupdir%
 		FileGetTime, timestamp, %backupname%, M
-		FormatTime, date, %timestamp%, yyyyMMdd
-		xData := A_YYYY * 10000 + A_MM * 100 + A_DD
-		xData -= date, days
-		if ( xData > interval ) 			;注意这里不能写成xData > %interval%   AutoHotkey的语法确实太魔幻了无力吐槽
+		if ( timestamp = "" )
 		{
-			if ( archive = true )
-				FileMove, %backupname%, %date%.zip
-			else
-				FileDelete, %backupname%
 			RunWait, %7zdir% a -tzip "%backupname%" "%targetdir%"
+		} else
+		{
+			FormatTime, date, %timestamp%, yyyyMMdd
+			xData := A_YYYY * 10000 + A_MM * 100 + A_DD
+			xData -= date, days
+			if ( xData > interval ) 			;注意这里不能写成xData > %interval%   AutoHotkey的语法确实太魔幻了无力吐槽
+			{
+				if ( archive = true )
+					FileMove, %backupname%, %date%.zip
+				else
+					FileDelete, %backupname%
+				RunWait, %7zdir% a -tzip "%backupname%" "%targetdir%"
+			}
 		}
 	}
 	
@@ -49,7 +55,9 @@ SendMode Input				;据说SendInput is the fastest send method.
 	packbackup("d:\Storage\Software\CentBrowser Backup", "Chrome&CentBrowser_Backup_30days.zip", "d:\TechnicalSupport\ProgramFiles\CentBrowser\User Data\", "25")
 	packbackup("d:\Storage\Software\Totalcmd Backup", "Total Commander newest backup.zip", "d:\TechnicalSupport\ProgramFiles\Total Commander 8.51a\", "30")
 	packbackup("d:\Dropbox\Technical_Backup", "Sandboxie.ini.zip", "D:\TechnicalSupport\ProgramFiles\Sandboxie\Sandboxie.ini", 7, false)
-	packbackup("d:\Dropbox\Technical_Backup", "hosts.zip", "C:\Windows\System32\drivers\etc\hosts", 2, false)
+	packbackup("d:\Dropbox\Technical_Backup", "hosts.zip", "C:\Windows\System32\drivers\etc\hosts", 7, false)
+	;calibre的配置（不用便携版，是因为无法记忆上次仓库地址）
+	packbackup("d:\Dropbox\Technical_Backup", "CalibreSettings.zip", "d:\TechnicalSupport\Users\LL\AppData\Roaming\calibre\", 7, false)
 	;备份操作不要间隔太小，如每次开机备份，这样坏配置可能会覆盖先前备份，导致真要恢复时也找不到有价值备份了
 }
 

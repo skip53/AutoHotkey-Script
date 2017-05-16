@@ -1,3 +1,7 @@
+## 鼓励
+
+如果这个仓库对你有用，请慷慨点击 _★Star_。你的支持将鼓励我继续分享！
+
 ## 缘起
 
 Windows的启动器，如`ALTRun`、`Claunch`、`Rolan`、`FARR`、`WOX`、`Listary`等，不能保证**两键**以内，启动常用程序。而且启动时，顺便做点附带操作，也不便定制。所以我转用AutoHotkey。
@@ -51,6 +55,3 @@ batchPdg() {
 
 [GitHub](https://github.com/waldens/AutoHotkey-Script/tree/master/Functions/appStarter%20%E5%BF%AB%E9%80%9F%E5%90%AF%E5%8A%A8%E5%99%A8)
 
-## 鼓励
-
-如果这个仓库对你有用，请慷慨点击 _★Star_。你的支持将鼓励我继续分享！
