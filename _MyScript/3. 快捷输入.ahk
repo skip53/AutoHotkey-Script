@@ -85,6 +85,9 @@ bbcode($) {
 	:*:q@\::
 		sendL("1755381995@qq.com")
 		return
+	:*:yx\::
+		sendL("VeryNginx回gmail.com")
+		return
 	:*:js\::
 		sendL("JavaScript")
 		return
