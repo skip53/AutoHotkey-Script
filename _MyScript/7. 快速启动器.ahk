@@ -49,5 +49,5 @@ return
 	return
 录制gif:
 	Run "D:\Dropbox\Technical_Backup\ProgramFiles.Untrust\keycastow 显示击键按键，录制屏幕时很有用\keycastow.exe"
-	Run "d:\Dropbox\Technical_Backup\ProgramFiles.Untrust\#Repository\ScreenToGif 1.4.1 屏幕录制gif\$$ScreenToGif 2.5.exe"
+	Run "d:\Dropbox\Technical_Backup\ProgramFiles.Untrust\#Repository\ScreenToGif 1.4.1 屏幕录制gif\ScreenToGif.exe"
 	return

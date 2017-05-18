@@ -1,4 +1,4 @@
-# AutoHotkey Script
+# AutoHotkey Script [![AutoHotkey](https://img.shields.io/badge/Language-AutoHotkey-yellowgreen.svg)](https://autohotkey.com/) [![License: GPL v3](https://img.shields.io/badge/License-GPL%20v3-blue.svg)](http://www.gnu.org/licenses/gpl-3.0) :cn:
 
 *个人使用的 AutoHotkey 脚本*
 
