@@ -91,7 +91,7 @@ bbcode($) {
 	:*:js\::
 		sendL("JavaScript")
 		return
-	::ahk::AutoHotkey
+	:?:ahk::AutoHotkey
 	::mlo::MyLifeOrganized
 
 	#If a_priorkey="Enter"

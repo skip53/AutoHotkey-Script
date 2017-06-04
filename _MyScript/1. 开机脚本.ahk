@@ -58,7 +58,9 @@ SendMode Input				;据说SendInput is the fastest send method.
 	packbackup("d:\Dropbox\Technical_Backup", "hosts.zip", "C:\Windows\System32\drivers\etc\hosts", 7, false)
 	;calibre的配置（不用便携版，是因为无法记忆上次仓库地址）
 	packbackup("d:\Dropbox\Technical_Backup", "CalibreSettings.zip", "d:\TechnicalSupport\Users\LL\AppData\Roaming\calibre\", 7, false)
+	packbackup("d:\Dropbox\Technical_Backup", "SnagItSettings.zip", "d:\TechnicalSupport\Sandbox\LL\1LongAndTrust\drive\D\TechnicalSupport\Users\LL\AppData\Local\TechSmith\SnagIt\", 7, false)
 	;备份操作不要间隔太小，如每次开机备份，这样坏配置可能会覆盖先前备份，导致真要恢复时也找不到有价值备份了
+	;备份注册表，可以用计划任务的方法
 }
 
 ;-------------------------------------------------------------------------------
