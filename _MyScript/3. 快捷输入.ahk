@@ -92,7 +92,7 @@ bbcode($) {
 		sendL("JavaScript")
 		return
 	:?:ahk::AutoHotkey
-	::mlo::MyLifeOrganized
+	:?:mlo::MyLifeOrganized
 
 	#If a_priorkey="Enter"
 	.::  sendL(".")			;回车+句号  自动变点号 避免AutoHotkey。com这种输入错误问题
