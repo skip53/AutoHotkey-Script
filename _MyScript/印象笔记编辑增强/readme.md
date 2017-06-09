@@ -10,12 +10,16 @@
 
 | 快捷键 |  作用 | 截图
 |----|-----| ----|
-|<kbd>Alt</kbd>+<kbd>F</kbd>        |  方(F)框环绕、代码块| ![](https://ooo.0o0.ooo/2017/04/25/58ff5abc37a5b.gif)|
-|<kbd>Alt</kbd>+<kbd>S</kbd>       |   超(Super)级标题 | ![](https://ooo.0o0.ooo/2017/04/25/58ff5abcdb470.gif)
-|<kbd>Alt</kbd>+<kbd>Y</kbd>      |   引(Y)用 | ![](https://ooo.0o0.ooo/2017/04/25/58ff5abebd25a.gif)
-|<kbd>Alt</kbd>-<kbd>1</kbd>/<kbd>2</kbd>/<kbd>3</kbd>/<kbd>4</kbd>  | 字体 红/蓝/灰/绿 色 | ![](https://ooo.0o0.ooo/2017/04/25/58ff5ac69e046.gif)
-| <kbd>Ctrl</kbd>+<kbd>Space</kbd>  | 简化格式（不再触发输入法切换）| |
+|<kbd>Alt</kbd> + <kbd>F</kbd>        |  方(F)框环绕、代码块| ![](https://ooo.0o0.ooo/2017/04/25/58ff5abc37a5b.gif)|
+|<kbd>Alt</kbd> + <kbd>S</kbd>       |   超(Super)级标题 | ![](https://ooo.0o0.ooo/2017/04/25/58ff5abcdb470.gif)
+|<kbd>Alt</kbd> + <kbd>Y</kbd>      |   引(Y)用 | ![](https://ooo.0o0.ooo/2017/04/25/58ff5abebd25a.gif)
+|<kbd>Alt</kbd> + <kbd>F1</kbd> / <kbd>F2</kbd> / <kbd>F3</kbd> / <kbd>F4</kbd>  | 字体 红 / 蓝 / 灰 / 绿 色 （方案一）| ![](https://ooo.0o0.ooo/2017/04/25/58ff5ac69e046.gif)
+|<kbd>Win</kbd> + <kbd>1</kbd> / <kbd>2</kbd> / <kbd>3</kbd> / <kbd>4</kbd>  | 字体 红 / 蓝 / 灰 / 绿 色 （方案二）<sup>①</sup>| ![](https://ooo.0o0.ooo/2017/06/09/593aa74f1de6f.gif)
+|<kbd>Alt</kbd> + <kbd>1</kbd> / <kbd>2</kbd> / <kbd>3</kbd> / <kbd>4</kbd>  | 黄 / 蓝 / 灰 / 绿 背景色高亮<sup>①</sup> | ![](https://ooo.0o0.ooo/2017/06/09/593aa205ef372.gif)
+| <kbd>Ctrl</kbd> + <kbd>Space</kbd>  | 简化格式（不再触发输入法切换）| |
 | 双击右键  | 文字高亮 | |
+
+* 方案二和背景色高亮，不可应用于段落，会导致换行失效
 
 ## 原理
 
@@ -23,12 +27,3 @@
 
 重点，不是这些快捷键，而是原理。明了原理后，你可以修改 *HTML代码*，增加更多你喜欢的样式
 
-## 题外话吐槽
-
-印象笔记v5.x版本时，这个方法还能修改文字背景色，如下图，做笔记非常好用！
-
-![高亮背景色](http://onuia4d7l.bkt.clouddn.com/2017_05_23_20170523073557.png)
-
-可惜，现在的v6.x版本，在回传文本时，客户端会狗尾续貂的 **强制**加入换行符，导致该方法失效。真是怨念
-
-如果你知道 **修改高亮颜色**的其它方法，请务必告诉我！谢谢

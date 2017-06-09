@@ -19,8 +19,8 @@
 	#Persistent				;持续运行不退出
 	#MaxThreadsPerHotkey 5
 
-  Menu, tray, tip, 印象笔记-编辑增强
-	TrayTip, 提示, 印象笔记-编辑增强, , 1
+  Menu, tray, tip, 印象笔记-编辑增强小工具
+	TrayTip, 提示, 印象笔记-编辑增强小工具, , 1
 	Sleep, 1000
 	TrayTip
   
@@ -150,28 +150,48 @@
 		
 		{
 			;字体红色
-			!1::
+			!F1::
 				evernoteMouseChangeColor(240, 46, 55)
 				SendInput, ^b
 				return
 			;字体蓝色
-			!2::
+			!F2::
 				evernoteMouseChangeColor(55, 64, 230)
 				SendInput, ^b
 				return
 			;字体灰色
-			!3::
+			!F3::
 				evernoteMouseChangeColor(214, 214, 214)
 				return
 			;字体绿色
-			!4::
+			!F4::
 				evernoteMouseChangeColor(15, 130, 15)
 				SendInput, ^b
 				return
 			;字体白色
-			!5::
+			!F5::
 				evernoteMouseChangeColor(255, 255, 255)
 				return
+				
+			;v6下用evernoteEditText()回帖，前面都会多一个空格，无解。但删除一下也不麻烦，聊胜于无吧
+			;背景色黄色
+			!1::evernoteEditText("<span style='background: #FFFAA5;'>", "</span>")
+			;背景色蓝色
+			!2::evernoteEditText("<span style='background: #ADD8E6;'>", "</span>")		;不要蓝色#ADD8E6
+			;背景色灰色
+			!3::evernoteEditText("<span style='background: #D3D3D3;'>", "</span>")
+			;背景色绿色
+			!4::evernoteEditText("<span style='background: #90EE90;'>", "</span>")		;原颜色#FFD796
+			
+			;字体红色
+			#1::evernoteEditText("<span style='color: #F02E37;'><b>", "</b></span>")
+			;字体蓝色
+			#2::evernoteEditText("<span style='color: #3740E6;'><b>", "</b></span>")
+			;字体灰色
+			#3::evernoteEditText("<span style='color: #D6D6D6;'>", "</span>")
+			;字体绿色
+			#4::evernoteEditText("<span style='color: #0F820F;'><b>", "</b></span>")
+			
 		}
 	}
 }
