@@ -16,7 +16,7 @@
 |<kbd>Alt</kbd> + <kbd>F1</kbd> / <kbd>F2</kbd> / <kbd>F3</kbd> / <kbd>F4</kbd>  | 字体 红 / 蓝 / 灰 / 绿 色<br>（方案一）| ![](https://ooo.0o0.ooo/2017/04/25/58ff5ac69e046.gif)
 |<kbd>Win</kbd> + <kbd>1</kbd> / <kbd>2</kbd> / <kbd>3</kbd> / <kbd>4</kbd>  | 字体 红 / 蓝 / 灰 / 绿 色<br>（方案二）| ![](https://ooo.0o0.ooo/2017/06/09/593aad055c513.gif)
 |<kbd>Alt</kbd> + <kbd>1</kbd> / <kbd>2</kbd> / <kbd>3</kbd> / <kbd>4</kbd>  | 黄 / 蓝 / 灰 / 绿 背景色高亮 | ![](https://ooo.0o0.ooo/2017/06/09/593aad064149f.gif)
-| <kbd>Ctrl</kbd> + <kbd>Space</kbd>  | 简化格式 不再触发输入法切换 | |
+| <kbd>Ctrl</kbd> + <kbd>Space</kbd>  | 简化格式 不再触发输入法切换 | | |
 | 双击右键  | 文字高亮 | |
 
 *方案二和背景色高亮，不可应用于段落，会导致换行失效*

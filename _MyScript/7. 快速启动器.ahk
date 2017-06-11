@@ -28,6 +28,8 @@ appStarter("#j", "D:\Dropbox\Technical_Backup\ProgramFiles.Untrust\HourglassPort
 appStarter("#u", "D:\Dropbox\Technical_Backup\ProgramFiles.Trust\UltraEdit v22.20.0.49(x32)\ultraedit.lnk")
 appStarter("#d", """D:\TechnicalSupport\ProgramFiles\Sandboxie\Start.exe"" /box:1LongAndTrust ""d:\Dropbox\Technical_Backup\ProgramFiles.Trust\douban\firefox\firefox.exe""")
 appStarter("#w", "D:\TechnicalSupport\Sandbox\LL\2TempAndUntrust\drive\C\Program Files (x86)\Netease\CloudMusic\cloudmusic.exe", "Õ¯“◊‘∆“Ù¿÷")
+appStarter("#c", "D:\TechnicalSupport\ProgramFiles\Calibre2\calibre.exe")
+
 
 return
 
