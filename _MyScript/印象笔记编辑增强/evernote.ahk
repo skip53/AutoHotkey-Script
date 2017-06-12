@@ -11,7 +11,7 @@
 	#InstallKeybdHook		;安装键盘和鼠标钩子 像Input和A_PriorKey，都需要钩子
 	#InstallMouseHook
 	SetTitleMatchMode Regex	;更改进程匹配模式为正则
-	#SingleInstance ignore	;决定当脚本已经运行时是否允许它再次运行。
+	#SingleInstance force	;决定当脚本已经运行时是否允许它再次运行。
 	#Persistent				;持续运行不退出
 	#MaxThreadsPerHotkey 5
 
