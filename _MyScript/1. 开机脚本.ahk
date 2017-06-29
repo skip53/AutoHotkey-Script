@@ -80,7 +80,8 @@ SendMode Input				;所有Send命令，统一采用最快的SendInput
 		}
 	}
 	
-	copyBackupForFile("d:\TechnicalSupport\SysBackup\EvernoteBackup\bootislands#app.yinxiang.com.exb", "d:\TechnicalSupport\Users\LL\Evernote\Databases\bootislands#app.yinxiang.com.exb", 7)
+	;不能简单的复制备份！复制期间写入数据库时，会因为只读状态，而导致印象丢笔记却不提醒，印象这点设计的超级不合理。改用Macrium Reflect备份(VSS机制)
+	;~ copyBackupForFile("d:\TechnicalSupport\SysBackup\EvernoteBackup\bootislands#app.yinxiang.com.exb", "d:\TechnicalSupport\Users\LL\Evernote\Databases\bootislands#app.yinxiang.com.exb", 7)
 }
 
 ;-------------------------------------------------------------------------------

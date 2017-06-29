@@ -29,7 +29,7 @@ appStarter("#u", "D:\Dropbox\Technical_Backup\ProgramFiles.Trust\UltraEdit v22.2
 appStarter("#d", """D:\TechnicalSupport\ProgramFiles\Sandboxie\Start.exe"" /box:1LongAndTrust ""d:\Dropbox\Technical_Backup\ProgramFiles.Trust\douban\firefox\firefox.exe""")
 appStarter("#w", "D:\TechnicalSupport\Sandbox\LL\2TempAndUntrust\drive\C\Program Files (x86)\Netease\CloudMusic\cloudmusic.exe", "网易云音乐")
 appStarter("#c", "D:\TechnicalSupport\ProgramFiles\Calibre2\calibre.exe")
-
+appStarter("#g", "D:\Dropbox\Technical_Backup\ProgramFiles.Trust\Shutdown8  定时关机\Shutdown8 关机.exe")
 
 return
 
