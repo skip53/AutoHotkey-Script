@@ -34,7 +34,7 @@ SendMode Input				;所有Send命令，统一采用最快的SendInput
 ;-------------------------------------------------------------------------------
 {
 	;压缩包方式备份
-	packBackup(destinationDir, destinationFileName, sourceDir, intervalDays, packAsZip := true) {
+	packBackup(destinationDir, destinationFileName, sourceDir, intervalDays, keepOldZip := true) {
 		7zdir := "d:\Dropbox\Technical_Backup\ProgramFiles.Trust\7z1604-extra  7zip的单独命令行版本\7za.exe"
 		SetWorkingDir, %destinationDir%
 		FileGetTime, timestamp, %destinationFileName%, M
@@ -48,7 +48,7 @@ SendMode Input				;所有Send命令，统一采用最快的SendInput
 			xData -= date, days
 			if ( xData > intervalDays ) 			;注意这里不能写成xData > %intervalDays%   AutoHotkey的语法确实太魔幻了无力吐槽
 			{
-				if ( packAsZip = true )
+				if ( keepOldZip = true )
 					FileMove, %destinationFileName%, %date%.zip
 				else
 					FileDelete, %destinationFileName%
@@ -65,6 +65,7 @@ SendMode Input				;所有Send命令，统一采用最快的SendInput
 	;calibre的配置（不用便携版，是因为无法记忆上次仓库地址）
 	packBackup("d:\Dropbox\Technical_Backup", "CalibreSettings.zip", "d:\TechnicalSupport\Users\LL\AppData\Roaming\calibre\", 7, false)
 	packBackup("d:\Dropbox\Technical_Backup", "SnagItSettings.zip", "d:\TechnicalSupport\Sandbox\LL\1LongAndTrust\drive\D\TechnicalSupport\Users\LL\AppData\Local\TechSmith\SnagIt\", 7, false)
+	packBackup("d:\Dropbox\Technical_Backup", "Anki配置备份.zip", "c:\Users\LL\AppData\Roaming\Anki2\", 7, false)
 	;备份操作不要间隔太小，如每次开机备份，这样坏配置可能会覆盖先前备份，导致真要恢复时也找不到有价值备份了
 	;备份注册表，可以用计划任务的方法
 	
