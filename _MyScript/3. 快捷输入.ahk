@@ -91,6 +91,11 @@ bbcode($) {
 	:*:js\::
 		sendL("JavaScript")
 		return
+	:*?Z:::::		;供anki里快速添加cloze的提示用
+		sendL("::")
+		KeyWait, Shift
+		SendInput, {Shift}
+		return
 	:?:ahk::AutoHotkey
 	:?:mlo::MyLifeOrganized
 
